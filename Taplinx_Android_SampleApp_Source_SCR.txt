@@ -1,0 +1,29 @@
+NXP Software Content Register
+
+Release - Sample App for Taplinx Android
+July 2025
+
+
+--------------------------------------------
+
+Package:                    sampleNxpNfcLib-4.1.0-RELEASE.zip
+Outgoing License:          	LA_OPT_EVAL_DEMO_ONLY v24 June 2025
+License Files:             	./LA_OPT_EVAL_DEMO_ONLY.htm
+Type of content:           	Source code
+Description and comments:  	TapLinx Android SDK consists of Android library that can be used to generate APDU to communicate
+                            with NXP Smartcards and uses Android SDK’s transceive functionality.
+                            The NFC transceive operations in Android is dependent on the middleware provided by the OEMs.
+Release Location:           nxp.com
+Origin:                    	NXP (proprietary)
+
+                            Taplinx Android Library 4.1.0 (NXP Proprietary)
+                            androidx.appcompat:appcompat:1.0.0	(Apache-2.0)	-	https://developer.android.com/jetpack/androidx
+                            com.google.firebase:firebase-core:21.1.1	(Android SDK LA)	- http://firebase.google.com/
+                            androidx.constraintlayout:constraintlayout:2.1.4	(Apache-2.0)	-	http://tools.android.com
+                            com.google.android.material:material:1.6.1	(Apache-2.0)	-	http://developer.android.com/tools/extras/support-library.html
+                            com.madgag.spongycastle:pkix:1.54.0.0	(MIT)	-	http://rtyley.github.io/spongycastle/
+                            com.madgag.spongycastle:prov:1.54.0.0	(MIT)	-	http://rtyley.github.io/spongycastle/
+                            com.madgag.spongycastle:core:1.54.0.0	(MIT)	-	http://rtyley.github.io/spongycastle/
+                            Android Framework  (Apache-2.0)   -  https://developer.android.com/reference/android/util/Base64
+--------------------------------------------
+

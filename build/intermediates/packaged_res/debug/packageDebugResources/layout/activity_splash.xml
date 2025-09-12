@@ -1,0 +1,45 @@
+<!--
+  ~ ******************************************************************************************************************************
+  ~ Copyright 2013-2020 NXP.
+  ~ NXP Confidential. This software is owned or controlled by NXP and may only be used strictly in accordance with the applicable license terms.
+  ~ By expressly accepting such terms or by downloading, installing, activating and/or otherwise using the software, you are agreeing that you have read, and that you agree to comply with and are bound by, such license terms.
+  ~ If you do not agree to be bound by the applicable license terms, then you may not retain, install, activate or otherwise use the software.
+  ~ *********************************************************************************************************************************
+  ~
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imgTapLinx"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+         android:contentDescription="@string/desc"
+        android:src="@drawable/taplinx_tree_with_tag_trans" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:contentDescription="@string/desc"
+        android:src="@drawable/nxp_logo"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/splash_text_margin_side"
+        android:layout_marginRight="@dimen/splash_text_margin_side"
+        android:text="@string/about_text"
+        android:visibility="gone" />
+
+
+</RelativeLayout>

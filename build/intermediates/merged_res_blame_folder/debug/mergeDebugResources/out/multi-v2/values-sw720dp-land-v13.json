@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.nxp.mifaresdksample-mergeDebugResources-16:/values-sw720dp-land-v13/values-sw720dp-land-v13.xml",
+            "map": [
+                {
+                    "source": "/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/res/values-sw720dp-land/dimens.xml",
+                    "from": {
+                        "startLines": "11",
+                        "startColumns": "4",
+                        "startOffsets": "851",
+                        "endColumns": "43",
+                        "endOffsets": "890"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "43",
+                        "endOffsets": "94"
+                    }
+                }
+            ]
+        }
+    ]
+}

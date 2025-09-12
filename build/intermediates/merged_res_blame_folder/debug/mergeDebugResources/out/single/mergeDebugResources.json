@@ -1,0 +1,190 @@
+[
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_desfire_light.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/desfire_light.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable_icon_tap_tag.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable/icon_tap_tag.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_desfireev3c.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/desfireev3c.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-hdpi_nxp_icon_about.png.flat",
+        "source": "com.nxp.mifaresdksample-pngs-14:/drawable-hdpi/nxp_icon_about.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-xxxhdpi_nxp_icon_about.png.flat",
+        "source": "com.nxp.mifaresdksample-pngs-14:/drawable-xxxhdpi/nxp_icon_about.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_app_bkgnd.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/app_bkgnd.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-xhdpi_nxp_icon_about.png.flat",
+        "source": "com.nxp.mifaresdksample-pngs-14:/drawable-xhdpi/nxp_icon_about.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-mdpi_nxp_icon_about.png.flat",
+        "source": "com.nxp.mifaresdksample-pngs-14:/drawable-mdpi/nxp_icon_about.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_desfire_ev2.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/desfire_ev2.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_ultralight_aes.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/ultralight_aes.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable_nxp_color.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable/nxp_color.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_mifare_identity.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/mifare_identity.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_nxp_logo.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/nxp_logo.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_nxp_main_logo.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/nxp_main_logo.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/layout_activity_main.xml.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_desfireev3.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/desfireev3.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_plusev1.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/plusev1.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_ntag_p.jpg.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/ntag_p.jpg"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/menu_bottom_navigation_main.xml.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/menu/bottom_navigation_main.xml"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_desfire_ev1.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/desfire_ev1.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-ldpi_nxp_icon_about.png.flat",
+        "source": "com.nxp.mifaresdksample-pngs-14:/drawable-ldpi/nxp_icon_about.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_plusse.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/plusse.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_taplinx_tree_with_tag_trans.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/taplinx_tree_with_tag_trans.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_ultralight_c.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/ultralight_c.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_classicev1.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/classicev1.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-anydpi-v21_nxp_icon_about.xml.flat",
+        "source": "com.nxp.mifaresdksample-pngs-14:/drawable-anydpi-v21/nxp_icon_about.xml"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_ultralight_nano.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/ultralight_nano.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/layout_write_screen.xml.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/layout/write_screen.xml"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/layout_activity_splash.xml.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-xxhdpi_nxp_icon_about.png.flat",
+        "source": "com.nxp.mifaresdksample-pngs-14:/drawable-xxhdpi/nxp_icon_about.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_ultralight_ev1.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/ultralight_ev1.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_icode_p.jpg.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/icode_p.jpg"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/anim_rotate.xml.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/anim/rotate.xml"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable_app_bkgnd.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable/app_bkgnd.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_ultralight.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/ultralight.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_plus.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/plus.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_classic.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/classic.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/anim_zoomnrotate.xml.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/anim/zoomnrotate.xml"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_nxp_icon_write.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/nxp_icon_write.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable_nxp_icon_write.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable/nxp_icon_write.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_mifare_duox.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/mifare_duox.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/drawable-nodpi_product_overview.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/drawable-nodpi/product_overview.png"
+    },
+    {
+        "merged": "com.nxp.mifaresdksample-debug-18:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.nxp.mifaresdksample-main-20:/mipmap-mdpi/ic_launcher.png"
+    }
+]

@@ -1,0 +1,256 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.nxp.mifaresdksample"
+4    android:versionCode="23"
+5    android:versionName="23" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="16"
+9        android:targetSdkVersion="33" />
+10
+11    <uses-permission android:name="android.permission.NFC" />
+11-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:5:5-61
+11-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:5:22-59
+12    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+12-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:6:5-80
+12-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:6:22-78
+13    <uses-permission android:name="android.permission.INTERNET" />
+13-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:7:5-66
+13-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:7:22-64
+14    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+14-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:8:5-78
+14-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:8:22-76
+15
+16    <uses-feature
+16-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:10:5-12:34
+17        android:name="android.hardware.nfc"
+17-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:11:9-44
+18        android:required="true" />
+18-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:12:9-32
+19
+20    <supports-screens
+20-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:14:5-20:39
+21        android:anyDensity="true"
+21-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:15:9-34
+22        android:largeScreens="true"
+22-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:16:9-36
+23        android:normalScreens="true"
+23-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:17:9-37
+24        android:resizeable="false"
+24-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:18:9-35
+25        android:smallScreens="true"
+25-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:19:9-36
+26        android:xlargeScreens="true" />
+26-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:20:9-37
+27
+28    <uses-permission android:name="android.permission.WAKE_LOCK" />
+28-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:25:5-68
+28-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:25:22-65
+29    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+29-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:26:5-110
+29-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:26:22-107
+30
+31    <application
+31-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:22:5-60:19
+32        android:allowBackup="false"
+32-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:23:9-36
+33        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+33-->[androidx.core:core:1.5.0] /Users/sushiladhikari/.gradle/caches/transforms-4/7dcf2062724bc33cd499b32364941eda/transformed/core-1.5.0/AndroidManifest.xml:24:18-86
+34        android:debuggable="true"
+35        android:description="@string/app_name"
+35-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:24:9-47
+36        android:extractNativeLibs="true"
+37        android:icon="@mipmap/ic_launcher"
+37-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:25:9-43
+38        android:label="@string/app_name"
+38-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:26:9-41
+39        android:logo="@mipmap/ic_launcher"
+39-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:27:9-43
+40        android:supportsRtl="true"
+40-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:22:9-35
+41        android:testOnly="true"
+42        android:theme="@style/AppTheme" >
+42-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:28:9-40
+43        <uses-library
+43-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:30:9-89
+44            android:name="org.apache.http.legacy"
+44-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:30:23-61
+45            android:required="false" />
+45-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:30:62-87
+46
+47        <activity
+47-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:31:9-39:20
+48            android:name="com.nxp.sampletaplinx.SplashActivity"
+48-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:32:13-64
+49            android:exported="true"
+49-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:34:13-36
+50            android:screenOrientation="portrait" >
+50-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:33:13-49
+51            <intent-filter>
+51-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:35:13-38:29
+52                <action android:name="android.intent.action.MAIN" />
+52-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:36:17-68
+52-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:36:25-66
+53
+54                <category android:name="android.intent.category.LAUNCHER" />
+54-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:37:17-76
+54-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:37:27-74
+55            </intent-filter>
+56        </activity>
+57        <activity
+57-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:40:9-52:20
+58            android:name="com.nxp.sampletaplinx.MainActivity"
+58-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:41:13-62
+59            android:exported="false"
+59-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:44:13-37
+60            android:label="@string/app_name"
+60-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:42:13-45
+61            android:screenOrientation="portrait" >
+61-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:43:13-49
+62            <intent-filter>
+62-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:45:13-51:29
+63                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+63-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:46:17-76
+63-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:46:25-74
+64                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+64-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:47:17-75
+64-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:47:25-73
+65                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+65-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:48:17-76
+65-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:48:25-74
+66
+67                <category android:name="android.intent.category.DEFAULT" />
+67-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:50:17-75
+67-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:50:27-73
+68            </intent-filter>
+69        </activity>
+70        <activity
+70-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:53:9-58:20
+71            android:name="com.nxp.sampletaplinx.WriteActivity"
+71-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:53:19-69
+72            android:parentActivityName="com.nxp.sampletaplinx.MainActivity" >
+72-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:54:9-72
+73            <meta-data
+73-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:55:13-57:69
+74                android:name="android.support.PARENT_ACTIVITY"
+74-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:56:17-63
+75                android:value="com.nxp.sampletaplinx.MainActivity" />
+75-->/Users/sushiladhikari/Downloads/Sample_Application_Android/src/main/AndroidManifest.xml:57:17-67
+76        </activity>
+77
+78        <receiver
+78-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:23:9-31:20
+79            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+79-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:24:13-78
+80            android:enabled="true"
+80-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:25:13-35
+81            android:exported="true" >
+81-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:26:13-36
+82            <intent-filter>
+82-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:28:13-30:29
+83                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+83-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:29:17-94
+83-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:29:25-91
+84            </intent-filter>
+85        </receiver>
+86
+87        <service
+87-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:33:9-37:48
+88            android:name="com.google.android.gms.analytics.AnalyticsService"
+88-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:34:13-77
+89            android:enabled="true"
+89-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:35:13-35
+90            android:exported="false" />
+90-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:36:13-37
+91        <!--
+92             Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
+93             installation campaign reporting
+94        -->
+95        <receiver
+95-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:43:9-49:20
+96            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+96-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:44:13-85
+97            android:exported="true" >
+97-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:45:13-36
+98            <intent-filter>
+98-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:46:13-48:29
+99                <action android:name="com.android.vending.INSTALL_REFERRER" />
+99-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:47:17-79
+99-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:47:25-76
+100            </intent-filter>
+101        </receiver>
+102
+103        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+103-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:51:9-92
+103-->[:nxpnfcandroidlib-release:] /Users/sushiladhikari/.gradle/caches/transforms-4/7207a687d6879b17c237cdb008e6c8e4/transformed/jetified-nxpnfcandroidlib-release/AndroidManifest.xml:51:18-89
+104
+105        <receiver
+105-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:29:9-33:20
+106            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+106-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:30:13-85
+107            android:enabled="true"
+107-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:31:13-35
+108            android:exported="false" >
+108-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:32:13-37
+109        </receiver>
+110
+111        <service
+111-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:35:9-38:40
+112            android:name="com.google.android.gms.measurement.AppMeasurementService"
+112-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:36:13-84
+113            android:enabled="true"
+113-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:37:13-35
+114            android:exported="false" />
+114-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:38:13-37
+115        <service
+115-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:39:9-43:72
+116            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
+116-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:40:13-87
+117            android:enabled="true"
+117-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:41:13-35
+118            android:exported="false"
+118-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:42:13-37
+119            android:permission="android.permission.BIND_JOB_SERVICE" />
+119-->[com.google.android.gms:play-services-measurement:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b81da6a6d2c17962bbd55fb1226d0f93/transformed/jetified-play-services-measurement-18.0.0/AndroidManifest.xml:43:13-69
+120        <service
+120-->[com.google.android.gms:play-services-measurement-api:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b455938fccf799928405a818a1cbb540/transformed/jetified-play-services-measurement-api-18.0.0/AndroidManifest.xml:27:9-33:19
+121            android:name="com.google.firebase.components.ComponentDiscoveryService"
+121-->[com.google.android.gms:play-services-measurement-api:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b455938fccf799928405a818a1cbb540/transformed/jetified-play-services-measurement-api-18.0.0/AndroidManifest.xml:28:13-84
+122            android:directBootAware="true"
+122-->[com.google.firebase:firebase-common:19.3.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b62ddf543a9b3217d911df27a90adc16/transformed/jetified-firebase-common-19.3.0/AndroidManifest.xml:34:13-43
+123            android:exported="false" >
+123-->[com.google.android.gms:play-services-measurement-api:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b455938fccf799928405a818a1cbb540/transformed/jetified-play-services-measurement-api-18.0.0/AndroidManifest.xml:29:13-37
+124            <meta-data
+124-->[com.google.android.gms:play-services-measurement-api:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b455938fccf799928405a818a1cbb540/transformed/jetified-play-services-measurement-api-18.0.0/AndroidManifest.xml:30:13-32:85
+125                android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar"
+125-->[com.google.android.gms:play-services-measurement-api:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b455938fccf799928405a818a1cbb540/transformed/jetified-play-services-measurement-api-18.0.0/AndroidManifest.xml:31:17-139
+126                android:value="com.google.firebase.components.ComponentRegistrar" />
+126-->[com.google.android.gms:play-services-measurement-api:18.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b455938fccf799928405a818a1cbb540/transformed/jetified-play-services-measurement-api-18.0.0/AndroidManifest.xml:32:17-82
+127            <meta-data
+127-->[com.google.firebase:firebase-installations:16.3.2] /Users/sushiladhikari/.gradle/caches/transforms-4/8ab0527484eb89995265713912b595d3/transformed/jetified-firebase-installations-16.3.2/AndroidManifest.xml:17:13-19:85
+128                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+128-->[com.google.firebase:firebase-installations:16.3.2] /Users/sushiladhikari/.gradle/caches/transforms-4/8ab0527484eb89995265713912b595d3/transformed/jetified-firebase-installations-16.3.2/AndroidManifest.xml:18:17-127
+129                android:value="com.google.firebase.components.ComponentRegistrar" />
+129-->[com.google.firebase:firebase-installations:16.3.2] /Users/sushiladhikari/.gradle/caches/transforms-4/8ab0527484eb89995265713912b595d3/transformed/jetified-firebase-installations-16.3.2/AndroidManifest.xml:19:17-82
+130        </service>
+131
+132        <provider
+132-->[com.google.firebase:firebase-common:19.3.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b62ddf543a9b3217d911df27a90adc16/transformed/jetified-firebase-common-19.3.0/AndroidManifest.xml:26:9-30:39
+133            android:name="com.google.firebase.provider.FirebaseInitProvider"
+133-->[com.google.firebase:firebase-common:19.3.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b62ddf543a9b3217d911df27a90adc16/transformed/jetified-firebase-common-19.3.0/AndroidManifest.xml:27:13-77
+134            android:authorities="com.nxp.mifaresdksample.firebaseinitprovider"
+134-->[com.google.firebase:firebase-common:19.3.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b62ddf543a9b3217d911df27a90adc16/transformed/jetified-firebase-common-19.3.0/AndroidManifest.xml:28:13-72
+135            android:exported="false"
+135-->[com.google.firebase:firebase-common:19.3.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b62ddf543a9b3217d911df27a90adc16/transformed/jetified-firebase-common-19.3.0/AndroidManifest.xml:29:13-37
+136            android:initOrder="100" />
+136-->[com.google.firebase:firebase-common:19.3.0] /Users/sushiladhikari/.gradle/caches/transforms-4/b62ddf543a9b3217d911df27a90adc16/transformed/jetified-firebase-common-19.3.0/AndroidManifest.xml:30:13-36
+137
+138        <meta-data
+138-->[com.google.android.gms:play-services-basement:17.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/069419d7bf04c83a7f0c4082ac468d17/transformed/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
+139            android:name="com.google.android.gms.version"
+139-->[com.google.android.gms:play-services-basement:17.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/069419d7bf04c83a7f0c4082ac468d17/transformed/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
+140            android:value="@integer/google_play_services_version" />
+140-->[com.google.android.gms:play-services-basement:17.0.0] /Users/sushiladhikari/.gradle/caches/transforms-4/069419d7bf04c83a7f0c4082ac468d17/transformed/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
+141    </application>
+142
+143</manifest>

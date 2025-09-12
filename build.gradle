@@ -1,0 +1,107 @@
+/*
+ * *****************************************************************************************************************************
+ * Copyright 2013-2025 NXP.
+ * NXP Confidential. This software is owned or controlled by NXP and may only be used strictly in accordance with the applicable license terms.
+ * By expressly accepting such terms or by downloading, installing, activating and/or otherwise using the software, you are agreeing that you have read, and that you agree to comply with and are bound by, such license terms.
+ * If you do not agree to be bound by the applicable license terms, then you may not retain, install, activate or otherwise use the software.
+ * ********************************************************************************************************************************
+ *
+ */
+
+buildscript {
+
+    repositories {
+        google()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.6.1'
+        classpath 'com.google.gms:google-services:4.3.10'
+         //For generating the license report
+        classpath "com.jaredsburrows:gradle-license-plugin:0.9.8"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+        classpath "com.cyclonedx:cyclonedx-gradle-plugin:1.1.2"
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    namespace = "com.nxp.mifaresdksample"
+    compileSdkVersion 33
+    defaultConfig {
+        applicationId "com.nxp.mifaresdksample"
+        versionCode 23
+        versionName "23"
+        minSdkVersion 16
+        targetSdkVersion 33
+        multiDexEnabled = true
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    signingConfigs {
+        release {
+
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+    buildTypes {
+
+        debug {
+            
+            debuggable true
+        }
+        release {
+            signingConfig signingConfigs.release
+            debuggable false
+        }
+
+    }
+    dexOptions {
+        jumboMode = true
+    }
+    aaptOptions {
+        cruncherEnabled = false
+    }
+}
+
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    google()
+    mavenCentral()
+}
+
+ext {
+    compileSdkVersion = 33
+    supportLibVersion = "28.0.0"
+
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.firebase:firebase-core:18.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation name: 'nxpnfcandroidlib-release', ext: 'aar'
+    implementation group: 'com.madgag.spongycastle', name: 'pkix', version: '1.54.0.0'
+    implementation group: 'com.madgag.spongycastle', name: 'prov', version: '1.54.0.0'
+    implementation group: 'com.madgag.spongycastle', name: 'core', version: '1.54.0.0'
+}
+
+
+
