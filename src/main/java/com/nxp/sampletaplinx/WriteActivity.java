@@ -165,6 +165,9 @@ public class WriteActivity extends Activity {
      */
     private static final String ndefData = "TapLinx";
 
+    private static final byte FILE_NUMBER = 0x02; // Raw file number
+    private static final int FILE_SIZE = 128;
+
     static String ndefDataslix2 =
             "MifareSDKTeamMifareSDKTeamMifareSDKTeamMifareSDKTeamMifareSDKTeamMifareSDKTeam" +
                     "MifareSDKTeamMifareSDKTeamMifareSDKTeamMifareSDKTeamMifareSDKTeamMifar";
@@ -1380,11 +1383,11 @@ public class WriteActivity extends Activity {
 
     private void tag424DNACardLogic(INTAG424DNA ntag424DNA) {
         Log.e("tag424DNACardLogic","sushil");
-        byte[] KEY_AES128_DEFAULT = {
-                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, (byte) 0x00
+        byte[] KEY_AES128_DEFAULT = new byte[] {
+                (byte)0x00, (byte)0x11, (byte)0x22, (byte)0x33,
+                (byte)0x44, (byte)0x55, (byte)0x66, (byte)0x77,
+                (byte)0x88, (byte)0x99, (byte)0xAA, (byte)0xBB,
+                (byte)0xCC, (byte)0xDD, (byte)0xEE, (byte)0xFF
         };
         byte[] NTAG424DNA_APP_NAME =
                 {(byte) 0xD2, (byte) 0x76, 0x00, 0x00, (byte) 0x85, 0x01, 0x01};
@@ -1397,9 +1400,12 @@ public class WriteActivity extends Activity {
             KeyData aesKeyData = new KeyData();
             Key keyDefault = new SecretKeySpec(KEY_AES128_DEFAULT, "AES");
             aesKeyData.setKey(keyDefault);
-            ntag424DNA.authenticateEV2First(0, aesKeyData, null);
+           ntag424DNA.authenticateEV2First(0, aesKeyData, null);
+
             mStringBuilder.append(getString(R.string.Authentication_status_true));
             mStringBuilder.append("\n\n");
+
+            ntag424DNA.setPICCConfiguration(true);
 
             String jsonTemplate = "{\"configId\":\"1\",\"businessId\":\"1\",\"cmac\":\"\",\"counter\":\"\",\"uuid\":\"\"}";
             byte[] jsonBytes = jsonTemplate.getBytes("UTF-8");
@@ -1410,17 +1416,31 @@ public class WriteActivity extends Activity {
 
             NTAG424DNAFileSettings fs = new NTAG424DNAFileSettings(
                     CommunicationMode.Plain,  // or MAC/ENC depending on your security
-                    (byte) 0x02,              // file number = 0x02 (NDEF)
+                    FILE_NUMBER,              // file number = 0x02 (NDEF)
                     (byte) 0x02,              // read key
                     (byte) 0x0E,              // write key (0x0E = never)
                     (byte) 0x0E               // change key (0x0E = never)
             );
 
-            ntag424DNA.changeFileSettings(0x02, fs);
+            byte[] type = "U".getBytes("US-ASCII");
+
+            // Create NDEF record
+            NdefRecordWrapper record = new NdefRecordWrapper(
+                    NdefRecordWrapper.TNF_WELL_KNOWN,
+                    type,
+                    new byte[0],  // empty ID
+                    jsonBytes     // payload (your JSON)
+            );
+
+            // Wrap record into NDEF message
+            NdefMessageWrapper msg = new NdefMessageWrapper(record);
+
+            ntag424DNA.writeNDEF(msg);
 
             fs.setSDMEncryptFileDataEnabled(true);
             fs.setUIDMirroringEnabled(true);
             fs.setSDMReadCounterEnabled(true);
+
             byte[] bytes = new byte[] { (byte) 0x1A, (byte) 0x00, (byte) 0x00 };
             fs.setSdmAccessRights(bytes);
 
@@ -1437,21 +1457,14 @@ public class WriteActivity extends Activity {
             byte[] sdmMacInputOffset = new byte[] { (byte)(uuidStartCharIndex & 0xFF), 0x00, 0x00 };
             fs.setSdmMacInputOffset(sdmMacInputOffset);
 
-            byte[] type = "U".getBytes("US-ASCII");
+            ntag424DNA.changeFileSettings(FILE_NUMBER, fs);
 
-            // Create NDEF record
-            NdefRecordWrapper record = new NdefRecordWrapper(
-                    NdefRecordWrapper.TNF_WELL_KNOWN,
-                    type,
-                    new byte[0],  // empty ID
-                    jsonBytes     // payload (your JSON)
-            );
 
-            // Wrap record into NDEF message
-            NdefMessageWrapper msg = new NdefMessageWrapper(record);
 
-            ntag424DNA.writeNDEF(msg);
-            Log.i("MainActivity", "URI NDEF message written successful ");
+//            ntag424DNA.writeData(FILE_NUMBER, 0, jsonBytes);
+//
+//            String msg = new String(jsonBytes, "UTF-8");
+            Log.i("MainActivity", "URI NDEF message written successful msg::" + msg );
 
 
 
@@ -1477,6 +1490,8 @@ public class WriteActivity extends Activity {
         } catch (Exception e) {
             writeFailedMessage();
             mStringBuilder.append(e.getMessage());
+
+            Log.i("MainActivity", "URI NDEF message written successful $msg " + e.getMessage()  );
             showMessage(mStringBuilder.toString(), PRINT);
             NxpLogUtils.save();
         }
