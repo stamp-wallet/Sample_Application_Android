@@ -7,53 +7,90 @@
   ~ *********************************************************************************************************************************
   ~
   -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/padding_128"
     android:paddingTop="@dimen/padding_128"
     android:paddingRight="@dimen/padding_128">
 
+    <EditText
+        android:id="@+id/et_aes_key"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="AES-128 Key (16-byte hex)"
+        android:inputType="text"
+        android:maxLength="32"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_business_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Business ID (e.g., 1)"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_config_id" />
+
+    <CheckBox
+        android:id="@+id/cb_json_format"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="116dp"
+        android:layout_marginLeft="116dp"
+        android:layout_marginTop="60dp"
+        android:text="Use JSON format"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_config_id" />
+
+    <EditText
+        android:id="@+id/et_config_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Config ID (e.g., 1)"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_aes_key" />
+
     <ImageView
         android:id="@+id/tap_tag_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/separator"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="24dp"
         android:contentDescription="tap_tag_image"
-        android:src="@drawable/icon_tap_tag" />
-
-    <ImageView
-        android:id="@+id/nxp_background"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/text_info"
-        android:contentDescription="nxp_background"
-        android:src="@drawable/app_bkgnd" />
+        android:src="@drawable/icon_tap_tag"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cb_json_format" />
 
     <TextView
         android:id="@+id/text_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tap_tag_image"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="24dp"
         android:gravity="center"
         android:text="@string/info_string"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/text_note"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/note"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tap_tag_image" />
 
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/text_note"
-        android:layout_marginTop="10dp"
-        android:background="@android:color/holo_blue_light" />
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="12dp"
+        android:background="@android:color/holo_blue_light"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cb_json_format" />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

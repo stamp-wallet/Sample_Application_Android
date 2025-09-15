@@ -29,9 +29,11 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.EditText;
 
 import com.nxp.mifaresdksample.R;
 
@@ -112,9 +114,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-//added byt stmp wallet
-import com.nxp.nfclib.desfire.MFPCard.CommunicationMode;
-
+import com.nxp.nfclib.desfire.MFPCard;
 /**
  * This class is used to write the content to the tag.
  */
@@ -215,19 +215,13 @@ public class WriteActivity extends Activity {
 
         libInstance = NxpNfcLib.getInstance();
         try {
-            libInstance.registerActivity(this, packageKey);
+            libInstance.registerActivity(this, "secretkey");  // Use your package key
         } catch (NxpNfcLibException ex) {
             Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            // do nothing added to handle the crash if any
         }
 
         initializeView();
-
-        initializeKeys();
-
-        /* Initialize the Cipher and init vector of 16 bytes with 0xCD */
-        initializeCipherinitVector();
+        initializeCipherinitVector();  // Keep if needed for other logic
     }
 
     private void initializeView() {
@@ -241,6 +235,15 @@ public class WriteActivity extends Activity {
         tapTagImageView = findViewById(R.id.tap_tag_image);
     }
 
+    private byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
+    }
     private void initializeKeys() {
         KeyInfoProvider infoProvider = KeyInfoProvider.getInstance(getApplicationContext());
 
@@ -305,13 +308,50 @@ public class WriteActivity extends Activity {
     }
 
     @Override
-    public void onNewIntent(final Intent intent) {
-        mStringBuilder.delete(0, mStringBuilder.length());
-        writeLogic(intent);
+    protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        mStringBuilder.delete(0, mStringBuilder.length());
         tapTagImageView.setVisibility(View.GONE);
-    }
 
+        CardType type = CardType.UnknownCard;
+        try {
+            type = libInstance.getCardType(intent);
+        } catch (NxpNfcLibException ex) {
+            showMessage(ex.getMessage(), TOAST_PRINT);
+            return;
+        }
+
+        if (type == CardType.NTAG424DNA) {
+            // Handle SDM write for NTAG424DNA
+            try {
+                EditText etAesKey = findViewById(R.id.et_aes_key);
+                EditText etBusinessId = findViewById(R.id.et_business_id);
+                EditText etConfigId = findViewById(R.id.et_config_id);
+                CheckBox cbJsonFormat = findViewById(R.id.cb_json_format);
+
+                String aesKeyHex = etAesKey.getText().toString().toUpperCase();
+                if (aesKeyHex.length() != 32 || !aesKeyHex.matches("[0-9A-Fa-f]+")) {
+                    showMessage("Invalid AES key: Must be 32 hex characters", TOAST_PRINT);
+                    return;
+                }
+                byte[] aesKey = hexStringToByteArray(aesKeyHex);
+                int businessId = Integer.parseInt(etBusinessId.getText().toString());
+                int configId = Integer.parseInt(etConfigId.getText().toString());
+
+                INTAG424DNA ntag424 = DESFireFactory.getInstance().getNTAG424DNA(libInstance.getCustomModules());
+                CardLogic cardLogic = CardLogic.getInstance();
+                boolean useJson = cbJsonFormat.isChecked();
+                String result = cardLogic.tag424DNACardLogic(this, ntag424, aesKey, businessId, configId, useJson);
+
+                showMessage(result, TOAST_PRINT);
+            } catch (Exception e) {
+                showMessage("Error during SDM configuration: " + e.getMessage(), TOAST_PRINT);
+            }
+        } else {
+            // Fall back to existing write logic for other cards
+            writeLogic(intent);
+        }
+    }
     private void writeLogic(final Intent intent) {
         CardType type = CardType.UnknownCard;
         try {
@@ -1415,7 +1455,7 @@ public class WriteActivity extends Activity {
             int uuidStartCharIndex = jsonTemplate.indexOf("\"uuid\":\"\"") + "\"uuid\":\"".length();
 
             NTAG424DNAFileSettings fs = new NTAG424DNAFileSettings(
-                    CommunicationMode.Plain,  // or MAC/ENC depending on your security
+                    MFPCard.CommunicationMode.MAC,  // or MAC/ENC depending on your security
                     FILE_NUMBER,              // file number = 0x02 (NDEF)
                     (byte) 0x02,              // read key
                     (byte) 0x0E,              // write key (0x0E = never)

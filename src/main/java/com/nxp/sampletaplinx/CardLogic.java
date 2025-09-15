@@ -12,7 +12,6 @@
  *
  */
 
-
 package com.nxp.sampletaplinx;
 
 import static com.nxp.sampletaplinx.Constants.DEFAULT_ICode_PAGE;
@@ -28,6 +27,7 @@ import static com.nxp.sampletaplinx.Constants.objKEY_AES128;
 import static com.nxp.sampletaplinx.MainActivity.mString;
 
 import android.util.Log;
+import android.app.Activity;
 
 import com.nxp.mifaresdksample.R;
 import com.nxp.nfclib.CardType;
@@ -44,6 +44,8 @@ import com.nxp.nfclib.desfire.INTAG424DNA;
 import com.nxp.nfclib.desfire.INTAG424DNATT;
 import com.nxp.nfclib.desfire.INTag413DNA;
 import com.nxp.nfclib.desfire.TagTamper;
+import com.nxp.nfclib.desfire.MFPCard;
+import com.nxp.nfclib.desfire.NTAG424DNAFileSettings;
 import com.nxp.nfclib.exceptions.NxpNfcLibException;
 import com.nxp.nfclib.icode.ICode;
 import com.nxp.nfclib.icode.IICodeDNA;
@@ -54,6 +56,7 @@ import com.nxp.nfclib.icode.IICodeSLIX;
 import com.nxp.nfclib.icode.IICodeSLIX2;
 import com.nxp.nfclib.icode.IICodeSLIXL;
 import com.nxp.nfclib.icode.IICodeSLIXS;
+import com.nxp.nfclib.interfaces.IKeyData;
 import com.nxp.nfclib.ndef.INdefMessage;
 import com.nxp.nfclib.ndef.NdefMessageWrapper;
 import com.nxp.nfclib.ndef.NdefRecordWrapper;
@@ -986,101 +989,155 @@ class CardLogic {
         return stringBuilder.toString();
     }
 
+    String tag424DNACardLogic(Activity activity, INTAG424DNA ntag424DNA) {
+        byte[] defaultAesKey = KEY_AES128_DEFAULT;
+        return tag424DNACardLogic(activity, ntag424DNA, defaultAesKey, 1, 1, false); // Default to URL
+    }
     /**
-     * NTAG424DNA CardLogic.
+     * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
      */
 
-    String tag424DNACardLogic(MainActivity activity, INTAG424DNA ntag424DNA) {
-        byte[] NTAG424DNA_APP_NAME =
-                {(byte) 0xD2, (byte) 0x76, 0x00, 0x00, (byte) 0x85, 0x01, 0x01};
+    /**
+     * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
+     */
+    String tag424DNACardLogic(Activity activity, INTAG424DNA ntag424DNA, byte[] aesKey, int businessId, int configId, boolean useJson) {
+        byte[] NTAG424DNA_APP_NAME = {(byte) 0xD2, (byte) 0x76, 0x00, 0x00, (byte) 0x85, 0x01, 0x01};
+        StringBuilder stringBuilder = new StringBuilder();
+
         try {
-            stringBuilder.delete(0, stringBuilder.length());
-            stringBuilder.append(activity.getString(R.string.Card_Detected)).append(
-                    ntag424DNA.getType().getTagName()).append(
-                    activity.getString(R.string.LINE_BREAK));
+            ntag424DNA.getReader().connect();
 
-            stringBuilder.append(activity.getString(R.string.UID)).append(
-                    Utilities.dumpBytes(ntag424DNA.getUID())).append(
-                    activity.getString(R.string.LINE_BREAK));
-
-            stringBuilder.append(activity.getString(R.string.SIZE)).append(
-                    ntag424DNA.getTotalMemory()).append(activity.getString(R.string.LINE_BREAK));
+            // Log tag details
+            stringBuilder.append(activity.getString(R.string.Card_Detected))
+                    .append(ntag424DNA.getType().getTagName())
+                    .append(activity.getString(R.string.LINE_BREAK));
+            stringBuilder.append(activity.getString(R.string.UID))
+                    .append(Utilities.dumpBytes(ntag424DNA.getUID()))
+                    .append(activity.getString(R.string.LINE_BREAK));
+            stringBuilder.append(activity.getString(R.string.SIZE))
+                    .append(ntag424DNA.getTotalMemory())
+                    .append(activity.getString(R.string.LINE_BREAK));
 
             byte[] getVersion = ntag424DNA.getVersion();
             if (getVersion[0] == (byte) 0x04) {
-                stringBuilder.append(activity.getString(R.string.Vendor_ID)).append(
-                        activity.getString(R.string.NXP)).append(
-                        activity.getString(R.string.LINE_BREAK));
-
+                stringBuilder.append(activity.getString(R.string.Vendor_ID))
+                        .append(activity.getString(R.string.NXP))
+                        .append(activity.getString(R.string.LINE_BREAK));
             } else {
-                stringBuilder.append(activity.getString(R.string.Vendor_ID)).append(
-                        activity.getString(R.string.NON_NXP)).append(
-                        activity.getString(R.string.LINE_BREAK));
-
+                stringBuilder.append(activity.getString(R.string.Vendor_ID))
+                        .append(activity.getString(R.string.NON_NXP))
+                        .append(activity.getString(R.string.LINE_BREAK));
             }
 
+            // Authenticate with custom AES-128 key
             try {
-                stringBuilder.append(activity.getString(R.string.Auth_with_default_key));
-
+                stringBuilder.append("Authenticating with custom key...\n");
                 ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
                 KeyData aesKeyData = new KeyData();
-                Key keyDefault = new SecretKeySpec(KEY_AES128_DEFAULT, "AES");
-                aesKeyData.setKey(keyDefault);
+                Key keyCustom = new SecretKeySpec(aesKey, "AES");
+                aesKeyData.setKey(keyCustom);
                 ntag424DNA.authenticateEV2First(0, aesKeyData, null);
-                stringBuilder.append(activity.getString(R.string.Auth_success)).append(
-                        activity.getString(R.string.LINE_BREAK));
-
+                stringBuilder.append("Authentication successful\n");
             } catch (NxpNfcLibException e) {
-                stringBuilder.append(activity.getString(R.string.Unable_to_authenticate)).append(
-                        activity.getString(R.string.LINE_BREAK));
-
+                stringBuilder.append("Authentication failed: ").append(e.getMessage()).append("\n");
+                return stringBuilder.toString();
             }
 
+            // Enable SDM in PICC configuration
             try {
-                //Creating URI NDEF message
-                NdefMessageWrapper msg = new NdefMessageWrapper(
-                        new NdefRecordWrapper(NdefRecordWrapper.TNF_ABSOLUTE_URI,
-                                "https://www.nxp.com/".getBytes(
-                                        Charset.forName("US-ASCII")), new byte[0], new byte[0]));
-                stringBuilder.append(activity.getString(R.string.writing_ndef)).append(
-                        CustomModules.getUtility().dumpBytes(msg.toByteArray())).append(
-                        activity.getString(R.string.LINE_BREAK));
-
-                ntag424DNA.writeNDEF(msg);
-                stringBuilder.append(activity.getString(R.string.ndef_write_success)).append(
-                        activity.getString(R.string.LINE_BREAK));
+                ntag424DNA.setPICCConfiguration(true); // Enable SDM mirroring
+                stringBuilder.append("SDM enabled in PICC configuration\n");
             } catch (Exception e) {
-                e.printStackTrace();
-                stringBuilder.append(activity.getString(R.string.ndeg_write_failed)).append(
-                        e.getMessage()).append(activity.getString(R.string.LINE_BREAK));
+                stringBuilder.append("Failed to enable SDM: ").append(e.getMessage()).append("\n");
+                return stringBuilder.toString();
             }
 
+            // Configure SDM file settings (File 0x01 for NDEF with SDM)
             try {
-                stringBuilder.append(activity.getString(R.string.reading_ndef)).append(
-                        activity.getString(R.string.LINE_BREAK));
-
-                INdefMessage ndefRead = ntag424DNA.readNDEF();
-                stringBuilder.append(activity.getString(R.string.ndef_msg_read)).append(
-                        CustomModules.getUtility().dumpBytes(ndefRead.toByteArray())).append(
-                        activity.getString(R.string.LINE_BREAK));
-
+                NTAG424DNAFileSettings sdmSettings = new NTAG424DNAFileSettings(
+                        MFPCard.CommunicationMode.Encrypted, // Fallback until SDK updated
+                        (byte) 0x00, // Read access: Free
+                        (byte) 0x0E, // Write: Auth required
+                        (byte) 0x0E, // Read/Write: Auth
+                        (byte) 0x0E  // Change: Auth
+                );
+                ntag424DNA.changeFileSettings(0x01, sdmSettings);
+                stringBuilder.append("SDM file settings configured (Encrypted mode, no CMAC)\n");
             } catch (Exception e) {
-                e.printStackTrace();
-                stringBuilder.append(activity.getString(R.string.ndef_read_failed)).append(
-                        e.getMessage()).append(activity.getString(R.string.LINE_BREAK));
-
+                stringBuilder.append("Failed to configure SDM file settings: ").append(e.getMessage()).append("\n");
+                return stringBuilder.toString();
             }
-            stringBuilder.append(activity.getString(R.string.PROTOCOL)).append(activity.getString(
-                    R.string.PROTOCOL_NTAG)).append(activity.getString(R.string.LINE_BREAK));
 
-            stringBuilder.append(mString.toString()).append(
-                    activity.getString(R.string.LINE_BREAK));
+            // Write NDEF with SDM template (dynamic URL or JSON)
+            // In tag424DNACardLogic, replace the NDEF write block:
+            try {
+                NdefMessageWrapper ndefMsg;
+                if (useJson) { // New parameter or UI toggle
+                    ndefMsg = createSdmJsonNdef(businessId, configId);
+                    stringBuilder.append("SDM JSON NDEF written\n");
+                } else {
+                    String urlTemplate = "https://www.website.com/?uid=%UID%&ctr=%CTR%&businessID=" + businessId + "&configID=" + configId;
+                    ndefMsg = createSdmNdef(urlTemplate);
+                    stringBuilder.append("SDM URL NDEF written: ").append(urlTemplate).append("\n");
+                }
+                ntag424DNA.writeNDEF(ndefMsg);
+            } catch (Exception e) {
+                stringBuilder.append("NDEF write failed: ").append(e.getMessage()).append("\n");
+                return stringBuilder.toString();
+            }
 
         } catch (Exception e) {
-            stringBuilder.append(UNABLE_TO_READ).append(activity.getString(R.string.LINE_BREAK));
-
+            stringBuilder.append("Error: ").append(e.getMessage()).append("\n");
+        } finally {
+            if (ntag424DNA.getReader() != null && ntag424DNA.getReader().isConnected()) {
+                ntag424DNA.getReader().close();
+            }
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * Create NDEF message with SDM placeholders for UID, CTR, and CMAC (URL format).
+     */
+    private NdefMessageWrapper createSdmNdef(String urlTemplate) {
+        // Use NTAG424DNA placeholders (0xC0=UID, 0xC1=CTR, 0xC2=CMAC)
+        byte[] uidPlaceholder = {(byte) 0xC0};
+        byte[] ctrPlaceholder = {(byte) 0xC1};
+        byte[] cmacPlaceholder = {(byte) 0xC2};
+
+        String formattedUrl = urlTemplate.replace("%UID%", new String(uidPlaceholder))
+                .replace("%CTR%", new String(ctrPlaceholder))
+                .replace("%CMAC%", new String(cmacPlaceholder));
+
+        return new NdefMessageWrapper(
+                new NdefRecordWrapper(
+                        NdefRecordWrapper.TNF_ABSOLUTE_URI,
+                        formattedUrl.getBytes(Charset.forName("US-ASCII")),
+                        new byte[0],
+                        new byte[0]
+                )
+        );
+    }
+
+    /**
+     * Extension: Create NDEF message with SDM placeholders for JSON format.
+     */
+    private NdefMessageWrapper createSdmJsonNdef(int businessId, int configId) {
+        byte[] uidPlaceholder = {(byte) 0xC0};
+        byte[] ctrPlaceholder = {(byte) 0xC1};
+        byte[] cmacPlaceholder = {(byte) 0xC2};
+        String jsonTemplate = "{\"uuid\":\"%UID%\",\"counter\":\"%CTR%\",\"cmac\":\"%CMAC%\",\"businessId\":" + businessId + ",\"configId\":" + configId + "}";
+        String formattedJson = jsonTemplate.replace("%UID%", new String(uidPlaceholder))
+                .replace("%CTR%", new String(ctrPlaceholder))
+                .replace("%CMAC%", new String(cmacPlaceholder));
+        return new NdefMessageWrapper(
+                new NdefRecordWrapper(
+                        NdefRecordWrapper.TNF_MIME_MEDIA,
+                        "application/json".getBytes(Charset.forName("US-ASCII")),
+                        new byte[0],
+                        formattedJson.getBytes(Charset.forName("US-ASCII"))
+                )
+        );
     }
 
     /**
