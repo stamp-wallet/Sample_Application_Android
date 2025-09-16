@@ -1002,6 +1002,7 @@ class CardLogic {
      */
     String tag424DNACardLogic(Activity activity, INTAG424DNA ntag424DNA, byte[] aesKey, int businessId, int configId, boolean useJson) {
         byte[] NTAG424DNA_APP_NAME = {(byte) 0xD2, (byte) 0x76, 0x00, 0x00, (byte) 0x85, 0x01, 0x01};
+
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
@@ -1031,16 +1032,30 @@ class CardLogic {
 
             // Authenticate with custom AES-128 key
             try {
-                stringBuilder.append("Authenticating with custom key...\n");
+
+                stringBuilder.append("Authenticating with default key...\n");
                 ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+
                 KeyData aesKeyData = new KeyData();
-                Key keyCustom = new SecretKeySpec(aesKey, "AES");
-                aesKeyData.setKey(keyCustom);
+                Key keyDefault = new SecretKeySpec(KEY_AES128_DEFAULT, "AES");
+                aesKeyData.setKey(keyDefault);
                 ntag424DNA.authenticateEV2First(0, aesKeyData, null);
+
                 stringBuilder.append("Authentication successful\n");
             } catch (NxpNfcLibException e) {
                 stringBuilder.append("Authentication failed: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
+            }
+
+            // Change key if new key provided
+            if (aesKey != null && aesKey.length == 16) {
+                try {
+                    ntag424DNA.changeKey(0, aesKey, null, (byte) 0x00);
+                    stringBuilder.append("AES key provisioned on tag\n");
+                } catch (Exception e) {
+                    stringBuilder.append("Failed to provision AES key: ").append(e.getMessage()).append("\n");
+                    return stringBuilder.toString();
+                }
             }
 
             // Enable SDM in PICC configuration
@@ -1052,38 +1067,80 @@ class CardLogic {
                 return stringBuilder.toString();
             }
 
-            // Configure SDM file settings (File 0x01 for NDEF with SDM)
+            // Configure SDM file settings (File 0x02 for NDEF with SDM)
             try {
                 NTAG424DNAFileSettings sdmSettings = new NTAG424DNAFileSettings(
-                        MFPCard.CommunicationMode.Encrypted, // Fallback until SDK updated
-                        (byte) 0x00, // Read access: Free
-                        (byte) 0x0E, // Write: Auth required
-                        (byte) 0x0E, // Read/Write: Auth
-                        (byte) 0x0E  // Change: Auth
+                        MFPCard.CommunicationMode.Encrypted, 
+                        (byte) 0x0E, // Read access: Key 0
+                        (byte) 0x0E, // Write access: Key 0
+                        (byte) 0x0E, // Read/Write: Key 0
+                        (byte) 0x00  // Change access: Free
                 );
-                ntag424DNA.changeFileSettings(0x01, sdmSettings);
-                stringBuilder.append("SDM file settings configured (Encrypted mode, no CMAC)\n");
+                sdmSettings.setSDMEnabled(true);
+                sdmSettings.setUIDMirroringEnabled(true);
+                sdmSettings.setSDMReadCounterEnabled(true);
+                sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE1});
+                sdmSettings.setUidOffset(new byte[]{0x1A, 0x00, 0x00});
+                sdmSettings.setSdmReadCounterOffset(new byte[]{0x2D, 0x00, 0x00});
+                sdmSettings.setSdmMacOffset(new byte[]{0x39, 0x00, 0x00});
+                sdmSettings.setSdmMacInputOffset(new byte[]{0x39, 0x00, 0x00});
+
+                ntag424DNA.changeFileSettings(0x02, sdmSettings);
+                stringBuilder.append("SDM file settings configured (Encrypted mode, CMAC)\n");
             } catch (Exception e) {
                 stringBuilder.append("Failed to configure SDM file settings: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
             }
 
-            // Write NDEF with SDM template (dynamic URL or JSON)
-            // In tag424DNACardLogic, replace the NDEF write block:
+            // Write NDEF with SDM template (URL or JSON)
             try {
                 NdefMessageWrapper ndefMsg;
-                if (useJson) { // New parameter or UI toggle
-                    ndefMsg = createSdmJsonNdef(businessId, configId);
+                if (useJson) {
+                    // Use placeholders for SDM to replace dynamically
+                    String jsonTemplate = "{\"uuid\":\"00000000000000\",\"counter\":\"000000\",\"cmac\":\"0000000000000000\",\"businessId\":" + businessId + ",\"configId\":" + configId + "}";
+                    ndefMsg = new NdefMessageWrapper(
+                            new NdefRecordWrapper(
+                                    NdefRecordWrapper.TNF_MIME_MEDIA,
+                                    "application/json".getBytes(Charset.forName("US-ASCII")),
+                                    new byte[0],
+                                    jsonTemplate.getBytes(Charset.forName("US-ASCII"))
+                            )
+                    );
                     stringBuilder.append("SDM JSON NDEF written\n");
                 } else {
-                    String urlTemplate = "https://www.website.com/?uid=%UID%&ctr=%CTR%&businessID=" + businessId + "&configID=" + configId;
-                    ndefMsg = createSdmNdef(urlTemplate);
+                    String urlTemplate = "https://www.website.com/?uid=00000000000000&ctr=000000&cmac=0000000000000000&businessID=" + businessId + "&configID=" + configId;
+                    ndefMsg = new NdefMessageWrapper(
+                            new NdefRecordWrapper(
+                                    NdefRecordWrapper.TNF_WELL_KNOWN,
+                                    "U".getBytes(Charset.forName("US-ASCII")),
+                                    new byte[0],
+                                    concatenateByteArrays(
+                                            new byte[]{(byte) 0x04},
+                                            urlTemplate.getBytes(Charset.forName("US-ASCII"))
+                                    )
+                            )
+                    );
                     stringBuilder.append("SDM URL NDEF written: ").append(urlTemplate).append("\n");
                 }
                 ntag424DNA.writeNDEF(ndefMsg);
+
+                // Read back NDEF to verify dynamic values
+                INdefMessage ndefRead = ntag424DNA.readNDEF();
+                NdefMessageWrapper ndefWrapper = new NdefMessageWrapper((NdefRecordWrapper) ndefRead);
+                String ndefContent = new String(ndefWrapper.toByteArray(), Charset.forName("US-ASCII"));
+                stringBuilder.append("Read NDEF: ").append(ndefContent).append("\n");
             } catch (Exception e) {
-                stringBuilder.append("NDEF write failed: ").append(e.getMessage()).append("\n");
+                stringBuilder.append("NDEF write/read failed: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
+            }
+
+            // Log counter for verification
+            try {
+                byte[] counters = ntag424DNA.getFileCounters(0x02);
+                int counter = ((counters[0] & 0xFF) << 16) | ((counters[1] & 0xFF) << 8) | (counters[2] & 0xFF);
+                stringBuilder.append("SDM Read Counter: ").append(counter).append("\n");
+            } catch (Exception e) {
+                stringBuilder.append("Failed to read counter: ").append(e.getMessage()).append("\n");
             }
 
         } catch (Exception e) {
@@ -1094,6 +1151,13 @@ class CardLogic {
             }
         }
         return stringBuilder.toString();
+    }
+
+    private byte[] concatenateByteArrays(byte[] first, byte[] second) {
+        byte[] result = new byte[first.length + second.length];
+        System.arraycopy(first, 0, result, 0, first.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+        return result;
     }
 
     /**
