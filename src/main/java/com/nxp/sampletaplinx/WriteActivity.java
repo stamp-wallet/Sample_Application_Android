@@ -1424,10 +1424,10 @@ public class WriteActivity extends Activity {
     private void tag424DNACardLogic(INTAG424DNA ntag424DNA) {
         Log.e("tag424DNACardLogic","sushil");
         byte[] KEY_AES128_DEFAULT = new byte[] {
-                (byte)0x00, (byte)0x11, (byte)0x22, (byte)0x33,
-                (byte)0x44, (byte)0x55, (byte)0x66, (byte)0x77,
-                (byte)0x88, (byte)0x99, (byte)0xAA, (byte)0xBB,
-                (byte)0xCC, (byte)0xDD, (byte)0xEE, (byte)0xFF
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
         };
         byte[] NTAG424DNA_APP_NAME =
                 {(byte) 0xD2, (byte) 0x76, 0x00, 0x00, (byte) 0x85, 0x01, 0x01};
