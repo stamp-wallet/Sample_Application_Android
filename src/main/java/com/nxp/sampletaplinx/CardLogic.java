@@ -1070,7 +1070,7 @@ class CardLogic {
             // Configure SDM file settings (File 0x02 for NDEF with SDM)
             try {
                 NTAG424DNAFileSettings sdmSettings = new NTAG424DNAFileSettings(
-                        MFPCard.CommunicationMode.Encrypted, 
+                        MFPCard.CommunicationMode.Plain,
                         (byte) 0x0E, // Read access: Key 0
                         (byte) 0x0E, // Write access: Key 0
                         (byte) 0x0E, // Read/Write: Key 0
@@ -1161,54 +1161,9 @@ class CardLogic {
     }
 
     /**
-     * Create NDEF message with SDM placeholders for UID, CTR, and CMAC (URL format).
-     */
-    private NdefMessageWrapper createSdmNdef(String urlTemplate) {
-        // Use NTAG424DNA placeholders (0xC0=UID, 0xC1=CTR, 0xC2=CMAC)
-        byte[] uidPlaceholder = {(byte) 0xC0};
-        byte[] ctrPlaceholder = {(byte) 0xC1};
-        byte[] cmacPlaceholder = {(byte) 0xC2};
-
-        String formattedUrl = urlTemplate.replace("%UID%", new String(uidPlaceholder))
-                .replace("%CTR%", new String(ctrPlaceholder))
-                .replace("%CMAC%", new String(cmacPlaceholder));
-
-        return new NdefMessageWrapper(
-                new NdefRecordWrapper(
-                        NdefRecordWrapper.TNF_ABSOLUTE_URI,
-                        formattedUrl.getBytes(Charset.forName("US-ASCII")),
-                        new byte[0],
-                        new byte[0]
-                )
-        );
-    }
-
-    /**
-     * Extension: Create NDEF message with SDM placeholders for JSON format.
-     */
-    private NdefMessageWrapper createSdmJsonNdef(int businessId, int configId) {
-        byte[] uidPlaceholder = {(byte) 0xC0};
-        byte[] ctrPlaceholder = {(byte) 0xC1};
-        byte[] cmacPlaceholder = {(byte) 0xC2};
-        String jsonTemplate = "{\"uuid\":\"%UID%\",\"counter\":\"%CTR%\",\"cmac\":\"%CMAC%\",\"businessId\":" + businessId + ",\"configId\":" + configId + "}";
-        String formattedJson = jsonTemplate.replace("%UID%", new String(uidPlaceholder))
-                .replace("%CTR%", new String(ctrPlaceholder))
-                .replace("%CMAC%", new String(cmacPlaceholder));
-        return new NdefMessageWrapper(
-                new NdefRecordWrapper(
-                        NdefRecordWrapper.TNF_MIME_MEDIA,
-                        "application/json".getBytes(Charset.forName("US-ASCII")),
-                        new byte[0],
-                        formattedJson.getBytes(Charset.forName("US-ASCII"))
-                )
-        );
-    }
-
-    /**
      * NTAG424DNA Tag
      * Tamper CardLogic.
      */
-
     String tag424DNATTCardLogic(MainActivity activity, INTAG424DNATT ntag424DNATT) {
         byte[] NTAG424DNATT_APP_NAME =
                 {(byte) 0xD2, (byte) 0x76, 0x00, 0x00, (byte) 0x85, 0x01, 0x01};
