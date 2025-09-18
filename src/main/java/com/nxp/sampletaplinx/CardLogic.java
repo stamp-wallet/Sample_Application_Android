@@ -1085,7 +1085,7 @@ class CardLogic {
                     return stringBuilder.toString();
                 }
             }
-            
+
             // Enable SDM in PICC configuration
             try {
                 ntag424DNA.setPICCConfiguration(true); // Enable SDM mirroring

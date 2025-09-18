@@ -330,8 +330,8 @@ public class WriteActivity extends Activity {
                 CheckBox cbJsonFormat = findViewById(R.id.cb_json_format);
 
                 String aesKeyHex = etAesKey.getText().toString().toUpperCase();
-                if (aesKeyHex.length() != 32 || !aesKeyHex.matches("[0-9A-Fa-f]+")) {
-                    showMessage("Invalid AES key: Must be 32 hex characters", TOAST_PRINT);
+                if (!aesKeyHex.isEmpty() && !aesKeyHex.matches("[0-9A-Fa-f]+")) {
+                    showMessage("Invalid AES key characters", TOAST_PRINT);
                     return;
                 }
                 byte[] aesKey = hexStringToByteArray(aesKeyHex);
