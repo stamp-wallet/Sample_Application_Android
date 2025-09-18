@@ -1058,9 +1058,9 @@ class CardLogic {
             }
 
             // Change key if new key provided
-            if (aesKey != null && aesKey.length == 16) {
+            if (aesKey != null && aesKey.length == 32) {
                 try {
-                    //ntag424DNA.changeKey(0, aesKey, null, (byte) 0x00);
+                    ntag424DNA.changeKey(0, aesKey, null, (byte) 0x00);
                     stringBuilder.append("AES key provisioned on tag\n");
                 } catch (Exception e) {
                     stringBuilder.append("Failed to provision AES key: ").append(e.getMessage()).append("\n");
