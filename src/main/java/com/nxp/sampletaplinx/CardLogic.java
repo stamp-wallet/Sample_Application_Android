@@ -1040,7 +1040,7 @@ class CardLogic {
                         .append(activity.getString(R.string.LINE_BREAK));
             }
 
-            // Authenticate with custom AES-128 key
+            // Authenticate with default AES-128 key
             try {
 
                 stringBuilder.append("Authenticating with default key...\n");
@@ -1057,11 +1057,28 @@ class CardLogic {
                 return stringBuilder.toString();
             }
 
+
             // Change key if new key provided
             if (aesKey != null && aesKey.length == 16) {
                 try {
                     ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, (byte) 0x00);
                     stringBuilder.append("AES key provisioned on tag\n");
+
+                    // Re-authenticate with the new key
+                    try {
+                        ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+
+                        KeyData newKeyData = new KeyData();
+                        Key keyNew = new SecretKeySpec(aesKey, "AES");
+                        newKeyData.setKey(keyNew);
+
+                        ntag424DNA.authenticateEV2First(0, newKeyData, null);
+                        stringBuilder.append("Authentication successful with new AES key\n");
+                    } catch (NxpNfcLibException e) {
+                        stringBuilder.append("Re-authentication with new key failed: ").append(e.getMessage()).append("\n");
+                        return stringBuilder.toString();
+                    }
+
                 } catch (Exception e) {
                     stringBuilder.append("Failed to provision AES key: ")
                             .append(e.getMessage()).append("\n");
