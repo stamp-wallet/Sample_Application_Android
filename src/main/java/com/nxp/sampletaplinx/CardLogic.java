@@ -1077,13 +1077,13 @@ class CardLogic {
                         (byte) 0x00  // Change access: Free
                 );
                 sdmSettings.setSDMEnabled(true);
-                sdmSettings.setUIDMirroringEnabled(false);
+                sdmSettings.setUIDMirroringEnabled(true);
                 sdmSettings.setSDMReadCounterEnabled(true);
-                sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE1});
-                //sdmSettings.setUidOffset(new byte[]{0x1A, 0x00, 0x00});
-                sdmSettings.setSdmReadCounterOffset(new byte[]{0x2D, 0x00, 0x00});
-                sdmSettings.setSdmMacOffset(new byte[]{0x39, 0x00, 0x00});
-                sdmSettings.setSdmMacInputOffset(new byte[]{0x39, 0x00, 0x00});
+                sdmSettings.setSdmAccessRights(new byte[]{(byte) 0x0E});
+                sdmSettings.setUidOffset(new byte[]{0x36});
+                sdmSettings.setSdmReadCounterOffset(new byte[]{0x51});
+                sdmSettings.setSdmMacOffset(new byte[]{0x67});
+                sdmSettings.setSdmMacInputOffset(new byte[]{0x31});
 
                 ntag424DNA.changeFileSettings(0x02, sdmSettings);
                 stringBuilder.append("SDM file settings configured (Encrypted mode, CMAC)\n");
