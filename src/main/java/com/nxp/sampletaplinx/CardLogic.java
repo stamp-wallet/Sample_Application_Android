@@ -1061,7 +1061,7 @@ class CardLogic {
             // Change key if new key provided
             if (aesKey != null && aesKey.length == 16) {
                 try {
-                    ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, (byte) 0x00);
+                    ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, (byte) 0x01);
                     stringBuilder.append("AES key provisioned on tag\n");
 
                     // Re-authenticate with the new key
