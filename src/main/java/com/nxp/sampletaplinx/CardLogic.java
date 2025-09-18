@@ -1040,60 +1040,36 @@ class CardLogic {
                         .append(activity.getString(R.string.LINE_BREAK));
             }
 
-            // Authenticate with default AES-128 key
-            try {
+            // Authenticate with default key (slot 0)
+            ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+            KeyData aesKeyData = new KeyData();
+            aesKeyData.setKey(new SecretKeySpec(KEY_AES128_DEFAULT, "AES"));
+            ntag424DNA.authenticateEV2First(0, aesKeyData, null);
+            stringBuilder.append("Authentication with default key successful\n");
 
-                stringBuilder.append("Authenticating with default key...\n");
-                ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
-
-                KeyData aesKeyData = new KeyData();
-                Key keyDefault = new SecretKeySpec(KEY_AES128_DEFAULT, "AES");
-                aesKeyData.setKey(keyDefault);
-                ntag424DNA.authenticateEV2First(0, aesKeyData, null);
-
-                stringBuilder.append("Authentication successful\n");
-            } catch (NxpNfcLibException e) {
-                stringBuilder.append("Authentication failed: ").append(e.getMessage()).append("\n");
-                return stringBuilder.toString();
-            }
-
-
-            // Change key if new key provided
+            // Change key 0 -> new AES key
             if (aesKey != null && aesKey.length == 16) {
                 try {
-                    ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, (byte) 0x01);
-                    stringBuilder.append("AES key provisioned on tag\n");
+                    // get current version
+                    byte oldVersion = ntag424DNA.getKeyVersion(0);
+                    byte newVersion = (byte) (oldVersion + 1);
 
-                    // Re-authenticate with the new key
-                    try {
-                        ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+                    ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, newVersion);
+                    stringBuilder.append("AES key changed, new version=").append(newVersion & 0xFF).append("\n");
 
-                        KeyData newKeyData = new KeyData();
-                        Key keyNew = new SecretKeySpec(aesKey, "AES");
-                        newKeyData.setKey(keyNew);
-
-                        ntag424DNA.authenticateEV2First(0, newKeyData, null);
-                        stringBuilder.append("Authentication successful with new AES key\n");
-                    } catch (NxpNfcLibException e) {
-                        stringBuilder.append("Re-authentication with new key failed: ").append(e.getMessage()).append("\n");
-                        stringBuilder.append("Authenticating with default key...\n");
-                        ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
-
-                        KeyData aesKeyData = new KeyData();
-                        Key keyDefault = new SecretKeySpec(KEY_AES128_DEFAULT, "AES");
-                        aesKeyData.setKey(keyDefault);
-                        ntag424DNA.authenticateEV2First(0, aesKeyData, null);
-
-                        stringBuilder.append("Authentication successful\n");
-                        return stringBuilder.toString();
-                    }
+                    // Re-authenticate with new key
+                    ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+                    KeyData newKeyData = new KeyData();
+                    newKeyData.setKey(new SecretKeySpec(aesKey, "AES"));
+                    ntag424DNA.authenticateEV2First(0, newKeyData, null);
+                    stringBuilder.append("Authentication successful with new AES key\n");
 
                 } catch (Exception e) {
-                    stringBuilder.append("Failed to provision AES key: ")
-                            .append(e.getMessage()).append("\n");
+                    stringBuilder.append("Failed to change AES key: ").append(e.getMessage()).append("\n");
                     return stringBuilder.toString();
                 }
             }
+
 
             // Enable SDM in PICC configuration
             try {
