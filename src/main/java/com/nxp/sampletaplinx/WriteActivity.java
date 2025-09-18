@@ -70,6 +70,7 @@ import com.nxp.nfclib.icode.IICodeSLIX2;
 import com.nxp.nfclib.icode.IICodeSLIXL;
 import com.nxp.nfclib.icode.IICodeSLIXS;
 import com.nxp.nfclib.interfaces.IKeyData;
+import com.nxp.nfclib.ndef.INdefMessage;
 import com.nxp.nfclib.ndef.NdefMessageWrapper;
 import com.nxp.nfclib.ndef.NdefRecordWrapper;
 import com.nxp.nfclib.ntag.INTag;
@@ -1381,13 +1382,20 @@ public class WriteActivity extends Activity {
 
     }
 
+    public static byte[] intTo2ByteArray(int value) {
+        return new byte[] {
+                (byte) (value & 0xFF),        // LSB
+                (byte) ((value >> 8) & 0xFF), // middle byte
+                (byte) ((value >> 16) & 0xFF) // MSB
+        };
+    }
+
     private void tag424DNACardLogic(INTAG424DNA ntag424DNA) {
-        Log.e("tag424DNACardLogic","sushil");
         byte[] KEY_AES128_DEFAULT = new byte[] {
-                (byte)0x00, (byte)0x11, (byte)0x22, (byte)0x33,
-                (byte)0x44, (byte)0x55, (byte)0x66, (byte)0x77,
-                (byte)0x88, (byte)0x99, (byte)0xAA, (byte)0xBB,
-                (byte)0xCC, (byte)0xDD, (byte)0xEE, (byte)0xFF
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
         };
         byte[] NTAG424DNA_APP_NAME =
                 {(byte) 0xD2, (byte) 0x76, 0x00, 0x00, (byte) 0x85, 0x01, 0x01};
@@ -1400,31 +1408,62 @@ public class WriteActivity extends Activity {
             KeyData aesKeyData = new KeyData();
             Key keyDefault = new SecretKeySpec(KEY_AES128_DEFAULT, "AES");
             aesKeyData.setKey(keyDefault);
+
            ntag424DNA.authenticateEV2First(0, aesKeyData, null);
+
+            ntag424DNA.setPICCConfiguration(true); // Enable SDM mirroring
 
             mStringBuilder.append(getString(R.string.Authentication_status_true));
             mStringBuilder.append("\n\n");
 
-            ntag424DNA.setPICCConfiguration(true);
 
-            String jsonTemplate = "{\"configId\":\"1\",\"businessId\":\"1\",\"cmac\":\"\",\"counter\":\"\",\"uuid\":\"\"}";
-            byte[] jsonBytes = jsonTemplate.getBytes("UTF-8");
-
-            int cmacStartCharIndex = jsonTemplate.indexOf("\"cmac\":\"\"") + "\"cmac\":\"".length();
-            int counterStartCharIndex = jsonTemplate.indexOf("\"counter\":\"\"") + "\"counter\":\"".length();
-            int uuidStartCharIndex = jsonTemplate.indexOf("\"uuid\":\"\"") + "\"uuid\":\"".length();
 
             NTAG424DNAFileSettings fs = new NTAG424DNAFileSettings(
                     CommunicationMode.Plain,  // or MAC/ENC depending on your security
-                    FILE_NUMBER,              // file number = 0x02 (NDEF)
-                    (byte) 0x02,              // read key
-                    (byte) 0x0E,              // write key (0x0E = never)
-                    (byte) 0x0E               // change key (0x0E = never)
+                    (byte) 0x0E,  // read -> key0
+                    (byte) 0x0E,  // write -> key0
+                    (byte) 0x0E,  // RW -> key0
+                    (byte) 00   // change -> free
             );
 
-            byte[] type = "U".getBytes("US-ASCII");
+
+
+            fs.setSDMEnabled(true);
+            fs.setUIDMirroringEnabled(true);
+            fs.setSDMReadCounterEnabled(true);
+
+            byte[] sdmAccess = new byte[]{
+                    (byte)0x11,  // Read: Key 0 + CMAC
+                    (byte)0x11,  // Write: Key 0 + CMAC
+                    (byte)0x00   // RW/Change: free
+            };
+
+
+
+            byte[] uuidOffset = intTo2ByteArray(8);
+
+            fs.setUidOffset(uuidOffset);
+
+            byte[] readCounterOffset = intTo2ByteArray(35);
+            fs.setSdmReadCounterOffset(readCounterOffset);
+
+            byte[] macOffset = intTo2ByteArray(50);
+
+            fs.setSdmMacInputOffset(uuidOffset);
+            fs.setSdmMacOffset(macOffset);
+            fs.setPiccDataOffset(uuidOffset);
+
+            fs.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE1});
+
+
+
+            ntag424DNA.changeFileSettings(FILE_NUMBER, fs);
 
             // Create NDEF record
+            byte[] type = "T".getBytes("US-ASCII");
+            String jsonTemplate = "{\"uuid\":\"00000000000000\",\"counter\":\"000000\",\"cmac\":\"0000000000000000\",\"domain1\":" + 1 + ",\"domain2\":" + 1 + "}";
+            byte[] jsonBytes = jsonTemplate.getBytes("UTF-8");
+
             NdefRecordWrapper record = new NdefRecordWrapper(
                     NdefRecordWrapper.TNF_WELL_KNOWN,
                     type,
@@ -1435,56 +1474,19 @@ public class WriteActivity extends Activity {
             // Wrap record into NDEF message
             NdefMessageWrapper msg = new NdefMessageWrapper(record);
 
+            Log.i("SUSHIADHIKARI", "json message written successful $msg " + record.toString()  );
+
             ntag424DNA.writeNDEF(msg);
 
-            fs.setSDMEncryptFileDataEnabled(true);
-            fs.setUIDMirroringEnabled(true);
-            fs.setSDMReadCounterEnabled(true);
-
-            byte[] bytes = new byte[] { (byte) 0x1A, (byte) 0x00, (byte) 0x00 };
-            fs.setSdmAccessRights(bytes);
-
-            byte[] setUidOffset = new byte[] { (byte) 0x1A, (byte) 0x00, (byte) 0x00 };
-            fs.setUidOffset(setUidOffset);
-
-            byte[] sdmReadCounterOffset = new byte[] { (byte)(counterStartCharIndex & 0xFF), 0x00, 0x00 };
-
-            fs.setSdmReadCounterOffset(sdmReadCounterOffset);
-
-            byte[] setSdmMacOffset =  new byte[] { (byte)(cmacStartCharIndex & 0xFF), 0x00, 0x00 };
-            fs.setSdmMacOffset(setSdmMacOffset);
-
-            byte[] sdmMacInputOffset = new byte[] { (byte)(uuidStartCharIndex & 0xFF), 0x00, 0x00 };
-            fs.setSdmMacInputOffset(sdmMacInputOffset);
-
-            ntag424DNA.changeFileSettings(FILE_NUMBER, fs);
+            final INdefMessage ndefRead = ntag424DNA.readNDEF();
+            Log.i("MainActivity", "Read URI NDEF message" +  CustomModules.getUtility().dumpBytes(ndefRead.toByteArray()));
 
 
 
-//            ntag424DNA.writeData(FILE_NUMBER, 0, jsonBytes);
-//
-//            String msg = new String(jsonBytes, "UTF-8");
-            Log.i("MainActivity", "URI NDEF message written successful msg::" + msg );
-
-
-
-
-            /*ntag424DNA.getReader().setTimeout(timeOut);
-            mStringBuilder.append(getString(R.string.Writing_data_to_Default_file));
-            mStringBuilder.append("\n\n");
-            ntag424DNA.setPICCConfiguration(true);
-            mStringBuilder.append(getString(R.string.Data_to_write)).append(
-                    Utilities.dumpBytes(data));
-            mStringBuilder.append("\n\n");
-            ntag424DNA.writeData(3, 0, data);
-            mStringBuilder.append(getString(R.string.Data_written_successfully));
-            mStringBuilder.append("\n\n");
-            mStringBuilder.append(getString(R.string.Data_read_from_the_card)).append(
-                    Utilities.dumpBytes(ntag424DNA.readData(3, 0, data.length)));
-            mStringBuilder.append("\n\n");
-            showMessage(mStringBuilder.toString(), PRINT);*/
-            //To save the logs to file \sdcard\NxpLogDump\logdump.xml
-
+           /* INdefMessage ndefRead = ntag424DNA.readNDEF();
+            NdefMessageWrapper ndefWrapper = new NdefMessageWrapper((NdefRecordWrapper) ndefRead);
+            String ndefContent = new String(ndefWrapper.toByteArray(), Charset.forName("US-ASCII"));
+            mStringBuilder.append("Read NDEF: ").append(ndefContent).append("\n");*/
 
             NxpLogUtils.save();
         } catch (Exception e) {
