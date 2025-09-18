@@ -81,12 +81,18 @@ import java.security.Key;
 import javax.crypto.spec.SecretKeySpec;
 
 
+
 /**
  * This class does the card related operations
  */
 class CardLogic {
     private static CardLogic instance = null;
     private final StringBuilder stringBuilder = new StringBuilder();
+
+    private final byte[] MASTER_APPLICATION_IDENTIFIER = new byte[3]; // '00 00 00'
+    private final byte[] MASTER_APPLICATION_KEY_DES_DEFAULT = Utils.hexStringToByteArray("0000000000000000");
+    private final byte[] MASTER_APPLICATION_KEY_AES_DEFAULT = Utils.hexStringToByteArray("00000000000000000000000000000000");
+    private final byte MASTER_APPLICATION_KEY_NUMBER = (byte) 0x00;
 
     /**
      * Protected constructor to avoid external object creation.
@@ -1001,10 +1007,6 @@ class CardLogic {
         byte[] defaultAesKey = KEY_AES128_DEFAULT;
         return tag424DNACardLogic(activity, ntag424DNA, defaultAesKey, 1, 1, false); // Default to URL
     }
-    /**
-     * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
-     */
-
 
 
     /**
@@ -1041,15 +1043,17 @@ class CardLogic {
             }
 
             // Authenticate with default key (slot 0)
-            ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+            ntag424DNA.isoSelectApplicationByDFName(MASTER_APPLICATION_IDENTIFIER);
             KeyData aesKeyData = new KeyData();
             aesKeyData.setKey(new SecretKeySpec(KEY_AES128_DEFAULT, "AES"));
             ntag424DNA.authenticateEV2First(0, aesKeyData, null);
             stringBuilder.append("Authentication with default key successful\n");
 
+
             // Change key 0 -> new AES key
             if (aesKey != null && aesKey.length == 16) {
                 try {
+                    ntag424DNA.isoSelectApplicationByDFName(MASTER_APPLICATION_IDENTIFIER);
                     // get current version
                     byte oldVersion = ntag424DNA.getKeyVersion(0);
                     byte newVersion = (byte) (oldVersion + 1);
