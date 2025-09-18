@@ -1060,14 +1060,15 @@ class CardLogic {
             // Change key if new key provided
             if (aesKey != null && aesKey.length == 16) {
                 try {
-                    ntag424DNA.changeKey(0, aesKey, null, (byte) 0x00);
+                    ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, (byte) 0x00);
                     stringBuilder.append("AES key provisioned on tag\n");
                 } catch (Exception e) {
-                    stringBuilder.append("Failed to provision AES key: ").append(e.getMessage()).append("\n");
+                    stringBuilder.append("Failed to provision AES key: ")
+                            .append(e.getMessage()).append("\n");
                     return stringBuilder.toString();
                 }
             }
-
+            
             // Enable SDM in PICC configuration
             try {
                 ntag424DNA.setPICCConfiguration(true); // Enable SDM mirroring
