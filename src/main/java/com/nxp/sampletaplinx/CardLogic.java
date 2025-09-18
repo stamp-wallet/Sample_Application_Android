@@ -989,6 +989,14 @@ class CardLogic {
         return stringBuilder.toString();
     }
 
+    public static byte[] intTo2ByteArray(int value) {
+        return new byte[] {
+                (byte) (value & 0xFF),        // LSB
+                (byte) ((value >> 8) & 0xFF), // middle byte
+                (byte) ((value >> 16) & 0xFF) // MSB
+        };
+    }
+
     String tag424DNACardLogic(Activity activity, INTAG424DNA ntag424DNA) {
         byte[] defaultAesKey = KEY_AES128_DEFAULT;
         return tag424DNACardLogic(activity, ntag424DNA, defaultAesKey, 1, 1, false); // Default to URL
@@ -996,6 +1004,8 @@ class CardLogic {
     /**
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
      */
+
+
 
     /**
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
@@ -1050,7 +1060,7 @@ class CardLogic {
             // Change key if new key provided
             if (aesKey != null && aesKey.length == 16) {
                 try {
-//                    ntag424DNA.changeKey(0, aesKey, null, (byte) 0x00);
+                    //ntag424DNA.changeKey(0, aesKey, null, (byte) 0x00);
                     stringBuilder.append("AES key provisioned on tag\n");
                 } catch (Exception e) {
                     stringBuilder.append("Failed to provision AES key: ").append(e.getMessage()).append("\n");
@@ -1080,13 +1090,12 @@ class CardLogic {
                 sdmSettings.setUIDMirroringEnabled(true);
                 sdmSettings.setSDMReadCounterEnabled(true);
                 sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE1});
+                sdmSettings.setUidOffset(new byte[]{0x1E, 0x00, 0x00});
+                sdmSettings.setSdmReadCounterOffset(new byte[]{0x39, 0x00, 0x00});
+                sdmSettings.setSdmMacOffset(new byte[]{0x49, 0x00, 0x00});
+                sdmSettings.setSdmMacInputOffset(new byte[]{0x41, 0x00, 0x00});
 
-                sdmSettings.setUidOffset(new byte[]{0x09, 0x00, 0x00});          // 9
-                sdmSettings.setSdmReadCounterOffset(new byte[]{0x24, 0x00, 0x00}); // 36
-                sdmSettings.setSdmMacOffset(new byte[]{0x34, 0x00, 0x00});       // 52
-                sdmSettings.setSdmMacInputOffset(new byte[]{0x2C, 0x00, 0x00});  // 44
-
-                ntag424DNA.changeFileSettings(0x01, sdmSettings);
+                ntag424DNA.changeFileSettings(0x02, sdmSettings);
                 stringBuilder.append("SDM file settings configured (Encrypted mode, CMAC)\n");
             } catch (Exception e) {
                 stringBuilder.append("Failed to configure SDM file settings: ").append(e.getMessage()).append("\n");
