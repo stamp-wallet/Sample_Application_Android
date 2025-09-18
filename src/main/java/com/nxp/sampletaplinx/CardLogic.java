@@ -1086,7 +1086,7 @@ class CardLogic {
                 sdmSettings.setSdmMacOffset(new byte[]{0x34, 0x00, 0x00});       // 52
                 sdmSettings.setSdmMacInputOffset(new byte[]{0x2C, 0x00, 0x00});  // 44
 
-                ntag424DNA.changeFileSettings(0x02, sdmSettings);
+                ntag424DNA.changeFileSettings(0x01, sdmSettings);
                 stringBuilder.append("SDM file settings configured (Encrypted mode, CMAC)\n");
             } catch (Exception e) {
                 stringBuilder.append("Failed to configure SDM file settings: ").append(e.getMessage()).append("\n");
