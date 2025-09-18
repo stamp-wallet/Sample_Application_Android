@@ -1076,6 +1076,15 @@ class CardLogic {
                         stringBuilder.append("Authentication successful with new AES key\n");
                     } catch (NxpNfcLibException e) {
                         stringBuilder.append("Re-authentication with new key failed: ").append(e.getMessage()).append("\n");
+                        stringBuilder.append("Authenticating with default key...\n");
+                        ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+
+                        KeyData aesKeyData = new KeyData();
+                        Key keyDefault = new SecretKeySpec(KEY_AES128_DEFAULT, "AES");
+                        aesKeyData.setKey(keyDefault);
+                        ntag424DNA.authenticateEV2First(0, aesKeyData, null);
+
+                        stringBuilder.append("Authentication successful\n");
                         return stringBuilder.toString();
                     }
 
