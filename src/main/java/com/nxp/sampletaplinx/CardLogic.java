@@ -997,16 +997,6 @@ class CardLogic {
         };
     }
 
-    String tag424DNACardLogic(Activity activity, INTAG424DNA ntag424DNA) {
-        byte[] defaultAesKey = KEY_AES128_DEFAULT;
-        return tag424DNACardLogic(activity, ntag424DNA, defaultAesKey, 1, 1, false); // Default to URL
-    }
-    /**
-     * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
-     */
-
-
-
     /**
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
      */
@@ -1051,7 +1041,7 @@ class CardLogic {
             if (aesKey != null && aesKey.length == 16) {
                 try {
                     // get current version
-                    byte oldVersion = ntag424DNA.getKeyVersion(0);
+                    byte oldVersion = ntag424DNA.getKeyVersion(2);
                     stringBuilder.append("Old key version = ").append(oldVersion & 0xFF).append("\n");
 
                     byte newVersion = (byte) ((oldVersion + 1) & 0xFF);
@@ -1059,8 +1049,8 @@ class CardLogic {
                         newVersion ^= 0x01; // just flip lowest bit if wrapped
                     }
 
-                    ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, newVersion);
-                    stringBuilder.append("AES key changed, new version=").append(newVersion & 0xFF).append("\n");
+                    ntag424DNA.changeKey(2, aesKey, KEY_AES128_DEFAULT, newVersion);
+                    stringBuilder.append("Key 2 AES key changed, new version=").append(newVersion & 0xFF).append("\n");
 
                     ntag424DNA.getReader().close();
                     ntag424DNA.getReader().connect();
@@ -1069,12 +1059,12 @@ class CardLogic {
                     ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
                     KeyData newKeyData = new KeyData();
                     newKeyData.setKey(new SecretKeySpec(aesKey, "AES"));
-                    ntag424DNA.authenticateEV2First(0, newKeyData, null);
-                    stringBuilder.append("Authentication successful with new AES key\n");
+                    ntag424DNA.authenticateEV2First(2, newKeyData, null);
+                    stringBuilder.append("Authentication successful with new AES key in slot 2\n");
 
                     // Confirm the key version actually changed
-                    byte confirmedVersion = ntag424DNA.getKeyVersion(0);
-                    stringBuilder.append("Confirmed key version on card = ")
+                    byte confirmedVersion = ntag424DNA.getKeyVersion(2);
+                    stringBuilder.append("Confirmed key 2 version on card = ")
                             .append(confirmedVersion & 0xFF).append("\n");
 
                 } catch (Exception e) {
