@@ -90,8 +90,6 @@ class CardLogic {
     private final StringBuilder stringBuilder = new StringBuilder();
 
     private final byte[] MASTER_APPLICATION_IDENTIFIER = new byte[3]; // '00 00 00'
-    private final byte[] MASTER_APPLICATION_KEY_DES_DEFAULT = Utils.hexStringToByteArray("0000000000000000");
-    private final byte[] MASTER_APPLICATION_KEY_AES_DEFAULT = Utils.hexStringToByteArray("00000000000000000000000000000000");
     private final byte MASTER_APPLICATION_KEY_NUMBER = (byte) 0x00;
 
     /**
@@ -1054,15 +1052,20 @@ class CardLogic {
             if (aesKey != null && aesKey.length == 16) {
                 try {
                     ntag424DNA.isoSelectApplicationByDFName(MASTER_APPLICATION_IDENTIFIER);
-                    // get current version
-                    byte oldVersion = ntag424DNA.getKeyVersion(0);
-                    byte newVersion = (byte) (oldVersion + 1);
 
+                    // get current version
+                    byte currentVersion = ntag424DNA.getKeyVersion(0);
+                    stringBuilder.append("Current key version: ").append(currentVersion & 0xFF).append("\n");
+
+                    byte newVersion = (byte)((currentVersion + 1) & 0xFF);
                     ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, newVersion);
                     stringBuilder.append("AES key changed, new version=").append(newVersion & 0xFF).append("\n");
 
+                    byte updatedVersion = ntag424DNA.getKeyVersion(0);
+                    stringBuilder.append("Updated key version: ").append(updatedVersion & 0xFF).append("\n");
+
                     // Re-authenticate with new key
-                    ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+                    // ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
                     KeyData newKeyData = new KeyData();
                     newKeyData.setKey(new SecretKeySpec(aesKey, "AES"));
                     ntag424DNA.authenticateEV2First(0, newKeyData, null);
