@@ -1052,10 +1052,18 @@ class CardLogic {
                 try {
                     // get current version
                     byte oldVersion = ntag424DNA.getKeyVersion(0);
-                    byte newVersion = (byte) (oldVersion + 1);
+                    stringBuilder.append("Old key version = ").append(oldVersion & 0xFF).append("\n");
+
+                    byte newVersion = (byte) ((oldVersion + 1) & 0xFF);
+                    if (newVersion == oldVersion) {
+                        newVersion ^= 0x01; // just flip lowest bit if wrapped
+                    }
 
                     ntag424DNA.changeKey(0, aesKey, KEY_AES128_DEFAULT, newVersion);
                     stringBuilder.append("AES key changed, new version=").append(newVersion & 0xFF).append("\n");
+
+                    ntag424DNA.getReader().close();
+                    ntag424DNA.getReader().connect();
 
                     // Re-authenticate with new key
                     ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
@@ -1063,6 +1071,11 @@ class CardLogic {
                     newKeyData.setKey(new SecretKeySpec(aesKey, "AES"));
                     ntag424DNA.authenticateEV2First(0, newKeyData, null);
                     stringBuilder.append("Authentication successful with new AES key\n");
+
+                    // Confirm the key version actually changed
+                    byte confirmedVersion = ntag424DNA.getKeyVersion(0);
+                    stringBuilder.append("Confirmed key version on card = ")
+                            .append(confirmedVersion & 0xFF).append("\n");
 
                 } catch (Exception e) {
                     stringBuilder.append("Failed to change AES key: ").append(e.getMessage()).append("\n");
