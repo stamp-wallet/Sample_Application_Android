@@ -77,6 +77,7 @@ import com.nxp.nfclib.utils.Utilities;
 
 import java.nio.charset.Charset;
 import java.security.Key;
+import java.util.zip.CRC32;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -1038,44 +1039,53 @@ class CardLogic {
                         .append(activity.getString(R.string.LINE_BREAK));
             }
 
-            // Authenticate with default key (slot 0)
+            // Select NDEF application
             ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
-            KeyData aesKeyData = new KeyData();
-            aesKeyData.setKey(new SecretKeySpec(KEY_AES128_DEFAULT, "AES"));
-            ntag424DNA.authenticateEV2First(0, aesKeyData, null);
-            stringBuilder.append("Authentication with default key successful\n");
+
+            // Authenticate with default master key (all zeros, key 0)
+            byte[] masterKeyBytes = new byte[16]; // All 0x00
+            KeyData masterKeyData = new KeyData();
+            SecretKeySpec masterKeySpec = new SecretKeySpec(masterKeyBytes, "AES");
+            masterKeyData.setKey(masterKeySpec);
+            ntag424DNA.authenticateEV2First(0, masterKeyData, null);
+            stringBuilder.append("Authenticated with master key successfully.\n");
 
             // Change key 0 -> new AES key
             if (aesKey != null && aesKey.length == 16) {
                 try {
-                    // get current version
-                    byte oldVersion = ntag424DNA.getKeyVersion(2);
+                    // Get current key version
+                    byte oldVersion = ntag424DNA.getKeyVersion(0);
                     stringBuilder.append("Old key version = ").append(oldVersion & 0xFF).append("\n");
 
+                    // Increment key version, handle wraparound
                     byte newVersion = (byte) ((oldVersion + 1) & 0xFF);
                     if (newVersion == oldVersion) {
-                        newVersion ^= 0x01; // just flip lowest bit if wrapped
+                        newVersion ^= 0x01; // Flip lowest bit if wrapped
                     }
+                    stringBuilder.append("Attempting to set new version = ").append(newVersion & 0xFF).append("\n");
 
-                    ntag424DNA.changeKey(2, aesKey, KEY_AES128_DEFAULT, newVersion);
-                    stringBuilder.append("Key 2 AES key changed, new version=").append(newVersion & 0xFF).append("\n");
+                    // Change key using TapLinx SDK method
+                    ntag424DNA.changeKey(0, KEY_AES128_DEFAULT, aesKey, newVersion);
+                    stringBuilder.append("Key 0 changed successfully, version ").append(newVersion & 0xFF).append(".\n");
 
+                    // Reconnect reader to reset session
                     ntag424DNA.getReader().close();
                     ntag424DNA.getReader().connect();
 
                     // Re-authenticate with new key
                     ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
                     KeyData newKeyData = new KeyData();
-                    newKeyData.setKey(new SecretKeySpec(aesKey, "AES"));
-                    ntag424DNA.authenticateEV2First(2, newKeyData, null);
-                    stringBuilder.append("Authentication successful with new AES key in slot 2\n");
+                    SecretKeySpec newKeySpec = new SecretKeySpec(aesKey, "AES");
+                    newKeyData.setKey(newKeySpec);
+                    ntag424DNA.authenticateEV2First(0, newKeyData, null);
+                    stringBuilder.append("Re-authenticated with new key successfully.\n");
 
-                    // Confirm the key version actually changed
-                    byte confirmedVersion = ntag424DNA.getKeyVersion(2);
-                    stringBuilder.append("Confirmed key 2 version on card = ")
-                            .append(confirmedVersion & 0xFF).append("\n");
+                    // Confirm key version
+                    byte confirmedVersion = ntag424DNA.getKeyVersion(0);
+                    stringBuilder.append("Confirmed key 0 version on card = ").append(confirmedVersion & 0xFF).append("\n");
 
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     stringBuilder.append("Failed to change AES key: ").append(e.getMessage()).append("\n");
                     return stringBuilder.toString();
                 }
