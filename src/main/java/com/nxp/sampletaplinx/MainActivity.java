@@ -69,6 +69,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.EditText;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.nxp.mifaresdksample.R;
@@ -115,6 +116,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 
 
 /**
@@ -359,6 +361,7 @@ public class MainActivity extends Activity {
             showMessage(e.getMessage(), TOAST_PRINT);
         }
     }
+
 
     //This API identifies the card type and calls the specific operations
     private void cardLogic(final Intent intent) {
