@@ -32,6 +32,7 @@
         android:id="@+id/et_business_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:hint="Business ID (e.g., 1)"
         android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,9 +42,9 @@
         android:id="@+id/cb_json_format"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="116dp"
-        android:layout_marginLeft="116dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginLeft="112dp"
+        android:layout_marginTop="56dp"
         android:text="Use JSON format"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_config_id" />
@@ -52,18 +53,19 @@
         android:id="@+id/cb_change_key"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="116dp"
-        android:layout_marginLeft="116dp"
-        android:layout_marginTop="60dp"
-        android:text="Change AES Key" />
+        android:text="Change AES Key"
+        tools:layout_editor_absoluteX="113dp"
+        tools:layout_editor_absoluteY="47dp" />
 
     <EditText
         android:id="@+id/et_config_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:hint="Config ID (e.g., 1)"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_aes_key" />
 
@@ -73,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="52dp"
         android:contentDescription="tap_tag_image"
         android:src="@drawable/icon_tap_tag"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +98,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:background="@android:color/holo_blue_light"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cb_json_format" />
