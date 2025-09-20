@@ -1042,54 +1042,55 @@ class CardLogic {
             // Select NDEF application
             ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
 
-            // Authenticate with default master key (all zeros, key 0)
+            if (changeKey) {
+                // Authenticate with default master key (all zeros, key 0)
+                KeyData keyData = new KeyData();
+                byte[] defaultKey = new byte[16]; // 00..00
+                SecretKeySpec defaultKeySpec = new SecretKeySpec(defaultKey, "AES");
+                keyData.setKey(defaultKeySpec);
+                ntag424DNA.authenticateEV2First(0, keyData, null);
+                stringBuilder.append("Authenticated with default key successfully.\n");
 
-            KeyData keyData = new KeyData();
-            byte[] defaultKey = new byte[16]; // 00..00
-            SecretKeySpec defaultKeySpec = new SecretKeySpec(defaultKey, "AES");
-            keyData.setKey(defaultKeySpec);
-            ntag424DNA.authenticateEV2First(0, keyData, null);
-            stringBuilder.append("Authenticated with default key successfully.\n");
+                // Change key 0 -> new AES key
+                if (aesKey != null && aesKey.length == 16) {
+                    try {
+                        // Get current key version
+                        byte oldVersion = ntag424DNA.getKeyVersion(0);
+                        stringBuilder.append("Old key version = ").append(oldVersion & 0xFF).append("\n");
 
-            // Change key 0 -> new AES key
-            if (changeKey && aesKey != null && aesKey.length == 16) {
-                try {
-                    // Get current key version
-                    byte oldVersion = ntag424DNA.getKeyVersion(0);
-                    stringBuilder.append("Old key version = ").append(oldVersion & 0xFF).append("\n");
+                        // Increment key version, handle wraparound
+                        byte newVersion = (byte) ((oldVersion + 1) & 0xFF);
+                        if (newVersion == oldVersion) {
+                            newVersion ^= 0x01; // Flip lowest bit if wrapped
+                        }
+                        stringBuilder.append("Attempting to set new version = ").append(newVersion & 0xFF).append("\n");
 
-                    // Increment key version, handle wraparound
-                    byte newVersion = (byte) ((oldVersion + 1) & 0xFF);
-                    if (newVersion == oldVersion) {
-                        newVersion ^= 0x01; // Flip lowest bit if wrapped
+                        // Change key using TapLinx SDK method
+                        ntag424DNA.changeKey(0, KEY_AES128_DEFAULT, aesKey, newVersion);
+                        stringBuilder.append("Key 0 changed successfully, version ").append(newVersion & 0xFF).append(".\n");
+
+                        // Reconnect reader to reset session
+                        ntag424DNA.getReader().close();
+                        ntag424DNA.getReader().connect();
+
+                        // Re-authenticate with new key
+                        ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+                        KeyData newKeyData = new KeyData();
+                        SecretKeySpec newKeySpec = new SecretKeySpec(aesKey, "AES");
+                        newKeyData.setKey(newKeySpec);
+                        ntag424DNA.authenticateEV2First(0, newKeyData, null);
+                        stringBuilder.append("Re-authenticated with new key successfully.\n");
+
+                        // Confirm key version
+                        byte confirmedVersion = ntag424DNA.getKeyVersion(0);
+                        stringBuilder.append("Confirmed key 0 version on card = ").append(confirmedVersion & 0xFF).append("\n");
+
+                    } catch (Exception e) {
+                        stringBuilder.append("Failed to change AES key: ").append(e.getMessage()).append("\n");
+                        return stringBuilder.toString();
                     }
-                    stringBuilder.append("Attempting to set new version = ").append(newVersion & 0xFF).append("\n");
-
-                    // Change key using TapLinx SDK method
-                    ntag424DNA.changeKey(0, KEY_AES128_DEFAULT, aesKey, newVersion);
-                    stringBuilder.append("Key 0 changed successfully, version ").append(newVersion & 0xFF).append(".\n");
-
-                    // Reconnect reader to reset session
-                    ntag424DNA.getReader().close();
-                    ntag424DNA.getReader().connect();
-
-                    // Re-authenticate with new key
-                    ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
-                    KeyData newKeyData = new KeyData();
-                    SecretKeySpec newKeySpec = new SecretKeySpec(aesKey, "AES");
-                    newKeyData.setKey(newKeySpec);
-                    ntag424DNA.authenticateEV2First(0, newKeyData, null);
-                    stringBuilder.append("Re-authenticated with new key successfully.\n");
-
-                    // Confirm key version
-                    byte confirmedVersion = ntag424DNA.getKeyVersion(0);
-                    stringBuilder.append("Confirmed key 0 version on card = ").append(confirmedVersion & 0xFF).append("\n");
-
                 }
-                catch (Exception e) {
-                    stringBuilder.append("Failed to change AES key: ").append(e.getMessage()).append("\n");
-                    return stringBuilder.toString();
-                }
+
             }
             else {
                 stringBuilder.append("AES key change skipped, using provided/default key.\n");
