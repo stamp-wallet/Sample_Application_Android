@@ -1000,7 +1000,7 @@ class CardLogic {
 
      String tag424DNACardLogic(Activity activity, INTAG424DNA ntag424DNA) {
         byte[] defaultAesKey = KEY_AES128_DEFAULT;
-        return tag424DNACardLogic(activity, ntag424DNA, defaultAesKey, 1, 1, false); // Default to URL
+        return tag424DNACardLogic(activity, ntag424DNA, defaultAesKey, 1, 1, false, false); // Default to URL
     }
     /**
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
