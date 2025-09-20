@@ -1170,18 +1170,20 @@ class CardLogic {
                     stringBuilder.append("SDM URL NDEF written: ").append(urlTemplate).append("\n");
                 }
 
-                // Reconnect + re-authenticate before NDEF write
-                ntag424DNA.getReader().close();
-                ntag424DNA.getReader().connect();
-                ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+                // Only reconnect + re-authenticate if key was changed or file settings modified
+                if (changeKey) {
+                    ntag424DNA.getReader().close();
+                    ntag424DNA.getReader().connect();
+                    ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
 
-                KeyData activeKeyData = new KeyData();
-                SecretKeySpec activeKeySpec = new SecretKeySpec(aesKey, "AES"); // aesKey is your new key
-                activeKeyData.setKey(activeKeySpec);
-                ntag424DNA.authenticateEV2First(0, activeKeyData, null);
+                    KeyData activeKeyData = new KeyData();
+                    SecretKeySpec activeKeySpec = new SecretKeySpec(aesKey != null ? aesKey : new byte[16], "AES");
+                    activeKeyData.setKey(activeKeySpec);
+                    ntag424DNA.authenticateEV2First(0, activeKeyData, null);
 
-                stringBuilder.append("Re-authenticated with new key before NDEF write.\n");
-                
+                    stringBuilder.append("Re-authenticated with key before NDEF write.\n");
+                }
+
                 ntag424DNA.writeNDEF(ndefMsg);
 
                 // Read back NDEF to verify dynamic values
