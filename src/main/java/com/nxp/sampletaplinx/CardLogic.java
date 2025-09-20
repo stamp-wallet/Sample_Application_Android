@@ -1183,9 +1183,13 @@ class CardLogic {
 
                 // Read back NDEF to verify dynamic values
                 INdefMessage ndefRead = ntag424DNA.readNDEF();
-                NdefMessageWrapper ndefWrapper = new NdefMessageWrapper((NdefRecordWrapper) ndefRead);
-                String ndefContent = new String(ndefWrapper.toByteArray(), Charset.forName("US-ASCII"));
-                stringBuilder.append("Read NDEF: ").append(ndefContent).append("\n");
+                if (ndefRead instanceof NdefMessageWrapper) {
+                    NdefMessageWrapper ndefWrapper = (NdefMessageWrapper) ndefRead;
+                    String ndefContent = new String(ndefWrapper.toByteArray(), Charset.forName("US-ASCII"));
+                    stringBuilder.append("Read NDEF: ").append(ndefContent).append("\n");
+                } else {
+                    stringBuilder.append("Read NDEF but unexpected type: ").append(ndefRead.getClass().getName()).append("\n");
+                }
             } catch (Exception e) {
                 stringBuilder.append("NDEF write/read failed: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
