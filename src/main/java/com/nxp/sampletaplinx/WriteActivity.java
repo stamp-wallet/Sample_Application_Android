@@ -325,6 +325,7 @@ public class WriteActivity extends Activity {
             // Handle SDM write for NTAG424DNA
             try {
                 EditText etAesKey = findViewById(R.id.et_aes_key);
+                CheckBox cbChangeKey = findViewById(R.id.cb_change_key);
                 EditText etBusinessId = findViewById(R.id.et_business_id);
                 EditText etConfigId = findViewById(R.id.et_config_id);
                 CheckBox cbJsonFormat = findViewById(R.id.cb_json_format);
@@ -341,7 +342,8 @@ public class WriteActivity extends Activity {
                 INTAG424DNA ntag424 = DESFireFactory.getInstance().getNTAG424DNA(libInstance.getCustomModules());
                 CardLogic cardLogic = CardLogic.getInstance();
                 boolean useJson = cbJsonFormat.isChecked();
-                String result = cardLogic.tag424DNACardLogic(this, ntag424, aesKey, businessId, configId, useJson);
+                boolean changeKey = cbChangeKey.isChecked();
+                String result = cardLogic.tag424DNACardLogic(this, ntag424, aesKey, businessId, configId, useJson, changeKey);
 
                 showMessage(result, TOAST_PRINT);
             } catch (Exception e) {

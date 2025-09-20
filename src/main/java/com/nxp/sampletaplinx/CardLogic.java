@@ -1009,7 +1009,7 @@ class CardLogic {
     /**
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
      */
-    String tag424DNACardLogic(Activity activity, INTAG424DNA ntag424DNA, byte[] aesKey, int businessId, int configId, boolean useJson) {
+    String tag424DNACardLogic(Activity activity, INTAG424DNA ntag424DNA, byte[] aesKey, int businessId, int configId, boolean useJson, boolean changeKey){
         byte[] NTAG424DNA_APP_NAME = {(byte) 0xD2, (byte) 0x76, 0x00, 0x00, (byte) 0x85, 0x01, 0x01};
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -1061,7 +1061,7 @@ class CardLogic {
             }
 
             // Change key 0 -> new AES key
-            if (aesKey != null && aesKey.length == 16) {
+            if (changeKey && aesKey != null && aesKey.length == 16) {
                 try {
                     // Get current key version
                     byte oldVersion = ntag424DNA.getKeyVersion(0);
@@ -1099,6 +1099,9 @@ class CardLogic {
                     stringBuilder.append("Failed to change AES key: ").append(e.getMessage()).append("\n");
                     return stringBuilder.toString();
                 }
+            }
+            else {
+                stringBuilder.append("AES key change skipped, using provided/default key.\n");
             }
 
 

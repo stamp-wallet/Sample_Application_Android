@@ -48,6 +48,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_config_id" />
 
+    <CheckBox
+        android:id="@+id/cb_change_key"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="116dp"
+        android:layout_marginLeft="116dp"
+        android:layout_marginTop="60dp"
+        android:text="Change AES Key" />
+
     <EditText
         android:id="@+id/et_config_id"
         android:layout_width="match_parent"
