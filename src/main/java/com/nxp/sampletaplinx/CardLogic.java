@@ -1043,12 +1043,22 @@ class CardLogic {
             ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
 
             // Authenticate with default master key (all zeros, key 0)
-            byte[] masterKeyBytes = new byte[16]; // All 0x00
-            KeyData masterKeyData = new KeyData();
-            SecretKeySpec masterKeySpec = new SecretKeySpec(masterKeyBytes, "AES");
-            masterKeyData.setKey(masterKeySpec);
-            ntag424DNA.authenticateEV2First(0, masterKeyData, null);
-            stringBuilder.append("Authenticated with master key successfully.\n");
+
+            KeyData keyData = new KeyData();
+            try {
+                // Try with provided key first
+                SecretKeySpec providedKeySpec = new SecretKeySpec(aesKey, "AES");
+                keyData.setKey(providedKeySpec);
+                ntag424DNA.authenticateEV2First(0, keyData, null);
+                stringBuilder.append("Authenticated with provided key successfully.\n");
+            } catch (Exception e) {
+                // If it fails, fallback to default
+                byte[] defaultKey = new byte[16]; // 00..00
+                SecretKeySpec defaultKeySpec = new SecretKeySpec(defaultKey, "AES");
+                keyData.setKey(defaultKeySpec);
+                ntag424DNA.authenticateEV2First(0, keyData, null);
+                stringBuilder.append("Authenticated with default key successfully.\n");
+            }
 
             // Change key 0 -> new AES key
             if (aesKey != null && aesKey.length == 16) {
@@ -1156,6 +1166,19 @@ class CardLogic {
                     );
                     stringBuilder.append("SDM URL NDEF written: ").append(urlTemplate).append("\n");
                 }
+
+                // Reconnect + re-authenticate before NDEF write
+                ntag424DNA.getReader().close();
+                ntag424DNA.getReader().connect();
+                ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
+
+                KeyData activeKeyData = new KeyData();
+                SecretKeySpec activeKeySpec = new SecretKeySpec(aesKey, "AES"); // aesKey is your new key
+                activeKeyData.setKey(activeKeySpec);
+                ntag424DNA.authenticateEV2First(0, activeKeyData, null);
+
+                stringBuilder.append("Re-authenticated with new key before NDEF write.\n");
+                
                 ntag424DNA.writeNDEF(ndefMsg);
 
                 // Read back NDEF to verify dynamic values
