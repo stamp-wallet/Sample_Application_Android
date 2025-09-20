@@ -1043,12 +1043,22 @@ class CardLogic {
             ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
 
             // Authenticate with default master key (all zeros, key 0)
+
             KeyData keyData = new KeyData();
-            byte[] defaultKey = new byte[16]; // 00..00
-            SecretKeySpec defaultKeySpec = new SecretKeySpec(defaultKey, "AES");
-            keyData.setKey(defaultKeySpec);
-            ntag424DNA.authenticateEV2First(0, keyData, null);
-            stringBuilder.append("Authenticated with default key successfully.\n");
+            try {
+                // Try with provided key first
+                SecretKeySpec providedKeySpec = new SecretKeySpec(aesKey, "AES");
+                keyData.setKey(providedKeySpec);
+                ntag424DNA.authenticateEV2First(0, keyData, null);
+                stringBuilder.append("Authenticated with provided key successfully.\n");
+            } catch (Exception e) {
+                // If it fails, fallback to default
+                byte[] defaultKey = new byte[16]; // 00..00
+                SecretKeySpec defaultKeySpec = new SecretKeySpec(defaultKey, "AES");
+                keyData.setKey(defaultKeySpec);
+                ntag424DNA.authenticateEV2First(0, keyData, null);
+                stringBuilder.append("Authenticated with default key successfully.\n");
+            }
 
             // Change key 0 -> new AES key
             if (changeKey && aesKey != null && aesKey.length == 16) {
@@ -1167,7 +1177,7 @@ class CardLogic {
                     ntag424DNA.isoSelectApplicationByDFName(NTAG424DNA_APP_NAME);
 
                     KeyData activeKeyData = new KeyData();
-                    SecretKeySpec activeKeySpec = new SecretKeySpec(aesKey, "AES");
+                    SecretKeySpec activeKeySpec = new SecretKeySpec(aesKey != null ? aesKey : new byte[16], "AES");
                     activeKeyData.setKey(activeKeySpec);
                     ntag424DNA.authenticateEV2First(0, activeKeyData, null);
 
