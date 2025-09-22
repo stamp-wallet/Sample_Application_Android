@@ -1132,7 +1132,7 @@ class CardLogic {
                         (byte) 0x00  // Change access: Free
                 );
                 sdmSettings.setSDMEnabled(true);
-                sdmSettings.setUIDMirroringEnabled(true);
+                sdmSettings.setUIDMirroringEnabled(false);
                 sdmSettings.setSDMReadCounterEnabled(true);
                 sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE1});
                 sdmSettings.setUidOffset(new byte[]{0x1E, 0x00, 0x00});
@@ -1242,8 +1242,6 @@ class CardLogic {
                 byte[] counters = ntag424DNA.getFileCounters(0x02);
                 int counter = ((counters[0] & 0xFF) << 16) | ((counters[1] & 0xFF) << 8) | (counters[2] & 0xFF);
                 stringBuilder.append("SDM Read Counter: ").append(counter).append("\n");
-                stringBuilder.append("Card UID: ").append(ntag424DNA.getCardUID()).append(("\n"));
-                stringBuilder.append("UID: ").append(ntag424DNA.getUID()).append(("\n"));
             } catch (Exception e) {
                 stringBuilder.append("Failed to read counter: ").append(e.getMessage()).append("\n");
             }
