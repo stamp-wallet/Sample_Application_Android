@@ -77,6 +77,7 @@ import com.nxp.nfclib.utils.Utilities;
 
 import java.nio.charset.Charset;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.zip.CRC32;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -1006,6 +1007,11 @@ class CardLogic {
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
      */
 
+    private int byteArrayToInt(byte[] offsetBytes) {
+        // NTAG offsets are stored as little-endian 3-byte values
+        return (offsetBytes[0] & 0xFF) | ((offsetBytes[1] & 0xFF) << 8) | ((offsetBytes[2] & 0xFF) << 16);
+    }
+
     /**
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
      */
@@ -1114,9 +1120,11 @@ class CardLogic {
                 return stringBuilder.toString();
             }
 
+            NTAG424DNAFileSettings sdmSettings = null;
+
             // Configure SDM file settings (File 0x02 for NDEF with SDM)
             try {
-                NTAG424DNAFileSettings sdmSettings = new NTAG424DNAFileSettings(
+                sdmSettings = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
                         (byte) 0x0E, // Read access: Key 0
                         (byte) 0x0E, // Write access: Key 0
@@ -1195,6 +1203,35 @@ class CardLogic {
                 } else {
                     stringBuilder.append("Read NDEF but unexpected type: ").append(ndefRead.getClass().getName()).append("\n");
                 }
+
+                // After writing NDEF and verifying basic read
+                try {
+                    // Read the full DynamicFileData (the raw SDM content)
+                    byte[] dynamicFileData = ntag424DNA.readData((byte) 0x02, 0, 0); // file 0x02, offset=0, length=0 means full file
+                    String dynamicFileAscii = new String(dynamicFileData, Charset.forName("US-ASCII"));
+                    stringBuilder.append("DynamicFileData (ASCII): ").append(dynamicFileAscii).append("\n");
+
+                    // Extract MAC input range: [SDMMACInputOffset .. SDMMACOffset-1]
+                    int macInputOffset = byteArrayToInt(sdmSettings.getSdmMacInputOffset());
+                    int macOffset = byteArrayToInt(sdmSettings.getSdmMacOffset());
+
+                    // Log offsets
+                    stringBuilder.append("SDMMACInputOffset = ")
+                            .append(macInputOffset).append(" (0x").append(Integer.toHexString(macInputOffset)).append(")\n");
+                    stringBuilder.append("SDMMACOffset = ")
+                            .append(macOffset).append(" (0x").append(Integer.toHexString(macOffset)).append(")\n");
+
+                    if (macInputOffset >= 0 && macOffset > macInputOffset && macOffset <= dynamicFileData.length) {
+                        byte[] macInputBytes = Arrays.copyOfRange(dynamicFileData, macInputOffset, macOffset);
+                        String macInputAscii = new String(macInputBytes, Charset.forName("US-ASCII"));
+                        stringBuilder.append("MAC Input (ASCII): ").append(macInputAscii).append("\n");
+                    } else {
+                        stringBuilder.append("MAC Input offsets invalid or out of range.\n");
+                    }
+                } catch (Exception e) {
+                    stringBuilder.append("Failed to read DynamicFileData: ").append(e.getMessage()).append("\n");
+                }
+
             } catch (Exception e) {
                 stringBuilder.append("NDEF write/read failed: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
