@@ -1132,7 +1132,7 @@ class CardLogic {
                         (byte) 0x00  // Change access: Free
                 );
                 sdmSettings.setSDMEnabled(true);
-                sdmSettings.setUIDMirroringEnabled(false);
+                sdmSettings.setUIDMirroringEnabled(true);
                 sdmSettings.setSDMReadCounterEnabled(true);
                 sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE1});
                 sdmSettings.setUidOffset(new byte[]{0x1E, 0x00, 0x00});
