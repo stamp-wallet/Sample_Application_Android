@@ -19,49 +19,50 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Config ID -->
+
+    <!-- Business ID -->
+
+    <!-- Change AES Key -->
     <EditText
         android:id="@+id/et_config_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Config ID (e.g., 1)"
         android:inputType="number"
-        app:layout_constraintTop_toBottomOf="@id/et_aes_key"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_business_id" />
 
-    <!-- Business ID -->
     <EditText
         android:id="@+id/et_business_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Business ID (e.g., 1)"
         android:inputType="number"
-        app:layout_constraintTop_toBottomOf="@id/et_config_id"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_aes_key" />
 
-    <!-- Change AES Key -->
     <CheckBox
         android:id="@+id/cb_change_key"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Change AES Key"
-        app:layout_constraintTop_toBottomOf="@id/et_business_id"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="12dp" />
+        app:layout_constraintTop_toBottomOf="@+id/et_config_id" />
 
     <!-- Use JSON Format -->
     <CheckBox
         android:id="@+id/cb_json_format"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Use JSON format"
-        app:layout_constraintTop_toBottomOf="@id/et_business_id"
-        app:layout_constraintStart_toEndOf="@id/cb_change_key"
+        android:layout_width="147dp"
+        android:layout_height="30dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp" />
+        android:text="Use JSON format"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cb_change_key"
+        app:layout_constraintTop_toBottomOf="@+id/et_config_id" />
 
     <!-- Separator -->
     <View
