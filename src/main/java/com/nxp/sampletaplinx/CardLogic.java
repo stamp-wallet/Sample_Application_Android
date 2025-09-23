@@ -1134,7 +1134,7 @@ class CardLogic {
                 sdmSettings.setSDMEnabled(true);
                 sdmSettings.setUIDMirroringEnabled(true);
                 sdmSettings.setSDMReadCounterEnabled(true);
-                sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE1});
+                sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE0});
                 sdmSettings.setUidOffset(new byte[]{0x1E, 0x00, 0x00});
                 sdmSettings.setSdmReadCounterOffset(new byte[]{0x39, 0x00, 0x00});
                 sdmSettings.setSdmMacOffset(new byte[]{0x49, 0x00, 0x00});
