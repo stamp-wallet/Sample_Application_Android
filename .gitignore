@@ -2,3 +2,5 @@
 build/
 .idea/misc.xml
 local.properties
+
+.idea/

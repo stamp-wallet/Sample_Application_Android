@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Sample_Application_Android.iml" filepath="$PROJECT_DIR$/.idea/modules/Sample_Application_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Sample_Application_Android.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Sample_Application_Android.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Sample_Application_Android.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Sample_Application_Android.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Sample_Application_Android.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Sample_Application_Android.unitTest.iml" />
