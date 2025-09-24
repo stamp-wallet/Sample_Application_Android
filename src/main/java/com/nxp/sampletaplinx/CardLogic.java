@@ -77,6 +77,7 @@ import com.nxp.nfclib.utils.Utilities;
 
 import java.nio.charset.Charset;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.zip.CRC32;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -1006,6 +1007,11 @@ class CardLogic {
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
      */
 
+    private int byteArrayToInt(byte[] offsetBytes) {
+        // NTAG offsets are stored as little-endian 3-byte values
+        return (offsetBytes[0] & 0xFF) | ((offsetBytes[1] & 0xFF) << 8) | ((offsetBytes[2] & 0xFF) << 16);
+    }
+
     /**
      * NTAG424DNA CardLogic with SDM configuration (used in WriteActivity).
      */
@@ -1114,9 +1120,11 @@ class CardLogic {
                 return stringBuilder.toString();
             }
 
+            NTAG424DNAFileSettings sdmSettings = null;
+
             // Configure SDM file settings (File 0x02 for NDEF with SDM)
             try {
-                NTAG424DNAFileSettings sdmSettings = new NTAG424DNAFileSettings(
+                sdmSettings = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
                         (byte) 0x0E, // Read access: Key 0
                         (byte) 0x0E, // Write access: Key 0
@@ -1126,7 +1134,7 @@ class CardLogic {
                 sdmSettings.setSDMEnabled(true);
                 sdmSettings.setUIDMirroringEnabled(true);
                 sdmSettings.setSDMReadCounterEnabled(true);
-                sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE1});
+                sdmSettings.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE0});
                 sdmSettings.setUidOffset(new byte[]{0x1E, 0x00, 0x00});
                 sdmSettings.setSdmReadCounterOffset(new byte[]{0x39, 0x00, 0x00});
                 sdmSettings.setSdmMacOffset(new byte[]{0x49, 0x00, 0x00});
@@ -1144,7 +1152,7 @@ class CardLogic {
                 NdefMessageWrapper ndefMsg;
                 if (useJson) {
                     // Use placeholders for SDM to replace dynamically
-                    String jsonTemplate = "{\"uuid\":\"00000000000000\",\"counter\":\"000000\",\"cmac\":\"0000000000000000\",\"businessId\":" + businessId + ",\"configId\":" + configId + "}";
+                    String jsonTemplate = "{\"uuid\":\"00000000000000\",\"counter\":\"000000\",\"cmac\":\"0000000000000000\",\"businessId\":" + businessId + ",\"configId\":" + configId + "\"reader:\":\"NFC\"}";
                     ndefMsg = new NdefMessageWrapper(
                             new NdefRecordWrapper(
                                     NdefRecordWrapper.TNF_MIME_MEDIA,
@@ -1195,6 +1203,7 @@ class CardLogic {
                 } else {
                     stringBuilder.append("Read NDEF but unexpected type: ").append(ndefRead.getClass().getName()).append("\n");
                 }
+
             } catch (Exception e) {
                 stringBuilder.append("NDEF write/read failed: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
