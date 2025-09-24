@@ -1152,7 +1152,7 @@ class CardLogic {
                 NdefMessageWrapper ndefMsg;
                 if (useJson) {
                     // Use placeholders for SDM to replace dynamically
-                    String jsonTemplate = "{\"uuid\":\"00000000000000\",\"counter\":\"000000\",\"cmac\":\"0000000000000000\",\"businessId\":" + businessId + ",\"configId\":" + configId + ",\"reader:\":\"NFC\"}";
+                    String jsonTemplate = "{\"uuid\":\"00000000000000\",\"counter\":\"000000\",\"cmac\":\"0000000000000000\",\"businessId\":" + businessId + ",\"configId\":" + configId + ",\"reader\":\"NFC\"}";
                     ndefMsg = new NdefMessageWrapper(
                             new NdefRecordWrapper(
                                     NdefRecordWrapper.TNF_MIME_MEDIA,
