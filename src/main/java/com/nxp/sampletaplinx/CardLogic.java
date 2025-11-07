@@ -1126,10 +1126,10 @@ class CardLogic {
             try {
                 sdmSettings = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
-                        (byte) 0x0E, // Read access: Key 0
-                        (byte) 0x0E, // Write access: Key 0
-                        (byte) 0x0E, // Read/Write: Key 0
-                        (byte) 0x00  // Change access: Free
+                        (byte) 0x0E, // Read: free (still readable)
+                        (byte) 0x00, // Write: Key 0 required
+                        (byte) 0x00, // Read/Write: Key 0 required
+                        (byte) 0x00  // Change access: Key 0 required
                 );
                 sdmSettings.setSDMEnabled(true);
                 sdmSettings.setUIDMirroringEnabled(true);
