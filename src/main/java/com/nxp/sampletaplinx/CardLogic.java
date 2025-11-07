@@ -1051,11 +1051,13 @@ class CardLogic {
             // Authenticate with default master key (all zeros, key 0)
 
             KeyData keyData = new KeyData();
+            boolean authedWithProvided = false;
             try {
                 // Try with provided key first
                 SecretKeySpec providedKeySpec = new SecretKeySpec(aesKey, "AES");
                 keyData.setKey(providedKeySpec);
                 ntag424DNA.authenticateEV2First(0, keyData, null);
+                authedWithProvided = true;
                 stringBuilder.append("Authenticated with provided key successfully.\n");
             } catch (Exception e) {
                 // If it fails, fallback to default
@@ -1094,6 +1096,7 @@ class CardLogic {
                     SecretKeySpec newKeySpec = new SecretKeySpec(aesKey, "AES");
                     newKeyData.setKey(newKeySpec);
                     ntag424DNA.authenticateEV2First(0, newKeyData, null);
+                    authedWithProvided = true;
                     stringBuilder.append("Re-authenticated with new key successfully.\n");
 
                     // Confirm key version
@@ -1120,17 +1123,23 @@ class CardLogic {
                 return stringBuilder.toString();
             }
 
-            NTAG424DNAFileSettings sdmSettings = null;
+            // ======================================
+            // IMPORTANT: two-stage file protection:
+            //  1) Set NDEF file to require Key 0 for write/change (so other apps can't write)
+            //  2) Write NDEF
+            //  3) Re-authenticate and set NDEF/CC to permanent read-only (0x0F)
+            // ======================================
 
             // Configure SDM file settings (File 0x02 for NDEF with SDM)
             try {
-                sdmSettings = new NTAG424DNAFileSettings(
+                NTAG424DNAFileSettings sdmSettings = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
-                        (byte) 0x0E, // Read: free (still readable)
+                        (byte) 0x0E, // Read: free
                         (byte) 0x00, // Write: Key 0 required
                         (byte) 0x00, // Read/Write: Key 0 required
                         (byte) 0x00  // Change access: Key 0 required
                 );
+
                 sdmSettings.setSDMEnabled(true);
                 sdmSettings.setUIDMirroringEnabled(true);
                 sdmSettings.setSDMReadCounterEnabled(true);
@@ -1141,14 +1150,24 @@ class CardLogic {
                 sdmSettings.setSdmMacInputOffset(new byte[]{0x41, 0x00, 0x00});
 
                 ntag424DNA.changeFileSettings(0x02, sdmSettings);
-                stringBuilder.append("SDM file settings configured (Encrypted mode, CMAC)\n");
+                stringBuilder.append("Stage 1: SDM file settings applied (write requires Key 0).\n");
             } catch (Exception e) {
                 stringBuilder.append("Failed to configure SDM file settings: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
             }
 
+            // 2) Write NDEF (you must be authenticated with Key 0 now)
             // Write NDEF with SDM template (URL or JSON)
             try {
+                // Ensure authenticated with Key 0 (aesKey)
+                if (!authedWithProvided && aesKey != null && aesKey.length == 16) {
+                    KeyData kd = new KeyData();
+                    kd.setKey(new SecretKeySpec(aesKey, "AES"));
+                    ntag424DNA.authenticateEV2First(0, kd, null);
+                    authedWithProvided = true;
+                    stringBuilder.append("Authenticated before NDEF write with provided key.\n");
+                }
+
                 NdefMessageWrapper ndefMsg;
                 if (useJson) {
                     // Use placeholders for SDM to replace dynamically
@@ -1207,6 +1226,45 @@ class CardLogic {
             } catch (Exception e) {
                 stringBuilder.append("NDEF write/read failed: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
+            }
+
+            // --- Final LOCK: make tag fully read-only ---
+            try {
+                // Re-authenticate explicitly with Key 0 to be able to change file settings
+                if (aesKey != null && aesKey.length == 16) {
+                    KeyData kd = new KeyData();
+                    kd.setKey(new SecretKeySpec(aesKey, "AES"));
+                    ntag424DNA.authenticateEV2First(0, kd, null);
+                    stringBuilder.append("Re-authenticated with AES key for final lock.\n");
+                } else {
+                    stringBuilder.append("Warning: no AES key available for final lock authentication.\n");
+                    // If cannot authenticate with Key 0 now, final lock will probably fail.
+                }
+                // Lock NDEF file (0x02) permanently: write=none, change=none
+                NTAG424DNAFileSettings ndefLocked = new NTAG424DNAFileSettings(
+                        MFPCard.CommunicationMode.Plain,
+                        (byte) 0x0E, // read free
+                        (byte) 0x0F, // write none
+                        (byte) 0x0F, // r/w none
+                        (byte) 0x0F  // change none -> irreversible
+                );
+
+                ntag424DNA.changeFileSettings(0x02, ndefLocked);
+                stringBuilder.append("Final lock: NDEF file (0x02) permanently locked.\\n");
+
+                // Lock Capability Container (0x01) as well (so CC can't be modified)
+                NTAG424DNAFileSettings ccLocked = new NTAG424DNAFileSettings(
+                        MFPCard.CommunicationMode.Plain,
+                        (byte) 0x0E,
+                        (byte) 0x0F,
+                        (byte) 0x0F,
+                        (byte) 0x0F
+                );
+                ntag424DNA.changeFileSettings(0x01, ccLocked);
+                stringBuilder.append("Final lock: Capability Container (0x01) permanently locked.\n");
+
+            } catch (Exception e) {
+                stringBuilder.append("Failed to lock NDEF/CC files: ").append(e.getMessage()).append("\n");
             }
 
             // Log counter for verification
