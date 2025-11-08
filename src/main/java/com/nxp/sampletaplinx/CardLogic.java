@@ -1123,21 +1123,14 @@ class CardLogic {
                 return stringBuilder.toString();
             }
 
-            // ======================================
-            // IMPORTANT: two-stage file protection:
-            //  1) Set NDEF file to require Key 0 for write/change (so other apps can't write)
-            //  2) Write NDEF
-            //  3) Re-authenticate and set NDEF/CC to permanent read-only (0x0F)
-            // ======================================
-
             // Configure SDM file settings (File 0x02 for NDEF with SDM)
             try {
                 NTAG424DNAFileSettings sdmSettings = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
-                        (byte) 0x0E, // Read: free
-                        (byte) 0x0E, // Write: Key 0 required
-                        (byte) 0x0E, // Read/Write: Key 0 required
-                        (byte) 0x00  // Change access: Key 0 required
+                        (byte) 0x0E,
+                        (byte) 0x0E,
+                        (byte) 0x0E,
+                        (byte) 0x00
                 );
 
                 sdmSettings.setSDMEnabled(true);
@@ -1219,34 +1212,33 @@ class CardLogic {
                 return stringBuilder.toString();
             }
 
-            // --- Final LOCK: make tag fully read-only ---
-            try {
-                // Re-authenticate explicitly with Key 0 to be able to change file settings
-                if (aesKey != null && aesKey.length == 16) {
-                    KeyData kd = new KeyData();
-                    kd.setKey(new SecretKeySpec(aesKey, "AES"));
-                    ntag424DNA.authenticateEV2First(0, kd, null);
-                    stringBuilder.append("Re-authenticated with AES key for final lock.\n");
-                } else {
-                    stringBuilder.append("Warning: no AES key available for final lock authentication.\n");
-                    // If cannot authenticate with Key 0 now, final lock will probably fail.
-                }
-                // Lock NDEF file (0x02) permanently: write=none, change=none
-                NTAG424DNAFileSettings finalLock = new NTAG424DNAFileSettings(
-                        MFPCard.CommunicationMode.Plain,
-                        (byte) 0x0E, // Read: free
-                        (byte) 0x00, // Write: Key 0 required
-                        (byte) 0x00, // R/W: Key 0 required
-                        (byte) 0x00  // Change: Key 0 required
-                );
-
-                ntag424DNA.changeFileSettings(0x02, finalLock);
-                ntag424DNA.changeFileSettings(0x01, finalLock);
-                stringBuilder.append("Tag finalized: only authenticated AES key can modify NDEF or CC.\n");
-
-            } catch (Exception e) {
-                stringBuilder.append("Failed to lock NDEF/CC files: ").append(e.getMessage()).append("\n");
-            }
+//            try {
+//                // Re-authenticate explicitly with Key 0 to be able to change file settings
+//                if (aesKey != null && aesKey.length == 16) {
+//                    KeyData kd = new KeyData();
+//                    kd.setKey(new SecretKeySpec(aesKey, "AES"));
+//                    ntag424DNA.authenticateEV2First(0, kd, null);
+//                    stringBuilder.append("Re-authenticated with AES key for final lock.\n");
+//                } else {
+//                    stringBuilder.append("Warning: no AES key available for final lock authentication.\n");
+//                    // If cannot authenticate with Key 0 now, final lock will probably fail.
+//                }
+//                // Lock NDEF file (0x02) permanently
+//                NTAG424DNAFileSettings finalLock = new NTAG424DNAFileSettings(
+//                        MFPCard.CommunicationMode.Plain,
+//                        (byte) 0x0E,
+//                        (byte) 0x00,
+//                        (byte) 0x00,
+//                        (byte) 0x00
+//                );
+//
+//                ntag424DNA.changeFileSettings(0x02, finalLock);
+//                ntag424DNA.changeFileSettings(0x01, finalLock);
+//                stringBuilder.append("Tag finalized: only authenticated AES key can modify NDEF or CC.\n");
+//
+//            } catch (Exception e) {
+//                stringBuilder.append("Failed to lock NDEF/CC files: ").append(e.getMessage()).append("\n");
+//            }
 
             // Log counter for verification
             try {
