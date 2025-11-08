@@ -1244,9 +1244,9 @@ class CardLogic {
                 NTAG424DNAFileSettings ndefLocked = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
                         (byte) 0x0E, // read free
-                        (byte) 0x0F, // write none
-                        (byte) 0x0F, // r/w none
-                        (byte) 0x0F  // change none -> irreversible
+                        (byte) 0x00, // Write: Key 0 required
+                        (byte) 0x00, // Read/Write: Key 0 required
+                        (byte) 0x00  // Change access: Key 0 required
                 );
 
                 ntag424DNA.changeFileSettings(0x02, ndefLocked);
@@ -1256,9 +1256,9 @@ class CardLogic {
                 NTAG424DNAFileSettings ccLocked = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
                         (byte) 0x0E,
-                        (byte) 0x0F,
-                        (byte) 0x0F,
-                        (byte) 0x0F
+                        (byte) 0x00, // Write: Key 0 required
+                        (byte) 0x00, // Read/Write: Key 0 required
+                        (byte) 0x00  // Change access: Key 0 required
                 );
                 ntag424DNA.changeFileSettings(0x01, ccLocked);
                 stringBuilder.append("Final lock: Capability Container (0x01) permanently locked.\n");
