@@ -71,6 +71,7 @@ The NTAG424DNA tag generates a CMAC (Cipher-based Message Authentication Code) d
      - "SDM JSON NDEF written"
      - "Read NDEF: {"uuid":"04112233445566","counter":"123","cmac":"A1B2C3D4E5F67890","businessId":1,"configId":1}"
      - "SDM Read Counter: 123"
+     - "Tag finalized: only authenticated AES key can modify NDEF or CC"
 3. **Read and Validate**:
    - Use an NFC reader app to read the NDEF message.
    - Verify the `counter` increments on each tap (e.g., `124`, `125`).
