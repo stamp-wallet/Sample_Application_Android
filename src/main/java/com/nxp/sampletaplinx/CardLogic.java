@@ -1143,7 +1143,7 @@ class CardLogic {
                 sdmSettings.setSdmMacInputOffset(new byte[]{0x41, 0x00, 0x00});
 
                 ntag424DNA.changeFileSettings(0x02, sdmSettings);
-                stringBuilder.append("Stage 1: SDM file settings applied (write requires Key 0).\n");
+                stringBuilder.append("SDM file settings applied.\n");
             } catch (Exception e) {
                 stringBuilder.append("Failed to configure SDM file settings: ").append(e.getMessage()).append("\n");
                 return stringBuilder.toString();
@@ -1241,8 +1241,18 @@ class CardLogic {
                         (byte) 0x00
                 );
 
-                ntag424DNA.changeFileSettings(0x02, finalLock);
                 ntag424DNA.changeFileSettings(0x01, finalLock);
+
+                finalLock.setSDMEnabled(true);
+                finalLock.setUIDMirroringEnabled(true);
+                finalLock.setSDMReadCounterEnabled(true);
+                finalLock.setSdmAccessRights(new byte[]{(byte) 0xFE, (byte) 0xE0});
+                finalLock.setUidOffset(new byte[]{0x1E, 0x00, 0x00});
+                finalLock.setSdmReadCounterOffset(new byte[]{0x39, 0x00, 0x00});
+                finalLock.setSdmMacOffset(new byte[]{0x49, 0x00, 0x00});
+                finalLock.setSdmMacInputOffset(new byte[]{0x41, 0x00, 0x00});
+
+                ntag424DNA.changeFileSettings(0x02, finalLock);
                 stringBuilder.append("Tag finalized: only authenticated AES key can modify NDEF or CC.\n");
 
             } catch (Exception e) {
