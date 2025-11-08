@@ -14,6 +14,9 @@ Key features:
 - Configures SDM on file `0x02` with `Encrypted` mode for CMAC generation.
 - Logs UID, counter, and NDEF content for verification.
 - Supports backend CMAC validation using Node.js.
+- Final Lock Protection:
+After setup, the card can only be rewritten or reconfigured when authenticated with AES Key 0.
+Public readers can read NDEF data, but cannot modify or erase it.
 
 ## Usage
 1. **Launch the App**:
@@ -33,6 +36,7 @@ Key features:
      - "SDM JSON NDEF written" or "SDM URL NDEF written"
      - "Read NDEF: {"uuid":"04112233445566","counter":"123","cmac":"A1B2C3D4E5F67890","businessId":1,"configId":1}"
      - "SDM Read Counter: 123"
+     - "Tag finalized: only authenticated AES key can modify NDEF or CC"
    - Use an NFC reader app (e.g., NXP TagInfo) to read the tag’s NDEF message.
 
 ## CMAC Validation
