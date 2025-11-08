@@ -1135,8 +1135,8 @@ class CardLogic {
                 NTAG424DNAFileSettings sdmSettings = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
                         (byte) 0x0E, // Read: free
-                        (byte) 0x00, // Write: Key 0 required
-                        (byte) 0x00, // Read/Write: Key 0 required
+                        (byte) 0x0E, // Write: Key 0 required
+                        (byte) 0x0E, // Read/Write: Key 0 required
                         (byte) 0x00  // Change access: Key 0 required
                 );
 
@@ -1159,15 +1159,6 @@ class CardLogic {
             // 2) Write NDEF (you must be authenticated with Key 0 now)
             // Write NDEF with SDM template (URL or JSON)
             try {
-                // Ensure authenticated with Key 0 (aesKey)
-                if (!authedWithProvided && aesKey != null && aesKey.length == 16) {
-                    KeyData kd = new KeyData();
-                    kd.setKey(new SecretKeySpec(aesKey, "AES"));
-                    ntag424DNA.authenticateEV2First(0, kd, null);
-                    authedWithProvided = true;
-                    stringBuilder.append("Authenticated before NDEF write with provided key.\n");
-                }
-
                 NdefMessageWrapper ndefMsg;
                 if (useJson) {
                     // Use placeholders for SDM to replace dynamically
@@ -1241,27 +1232,17 @@ class CardLogic {
                     // If cannot authenticate with Key 0 now, final lock will probably fail.
                 }
                 // Lock NDEF file (0x02) permanently: write=none, change=none
-                NTAG424DNAFileSettings ndefLocked = new NTAG424DNAFileSettings(
+                NTAG424DNAFileSettings finalLock = new NTAG424DNAFileSettings(
                         MFPCard.CommunicationMode.Plain,
-                        (byte) 0x0E, // read free
+                        (byte) 0x0E, // Read: free
                         (byte) 0x00, // Write: Key 0 required
-                        (byte) 0x00, // Read/Write: Key 0 required
-                        (byte) 0x00  // Change access: Key 0 required
+                        (byte) 0x00, // R/W: Key 0 required
+                        (byte) 0x00  // Change: Key 0 required
                 );
 
-                ntag424DNA.changeFileSettings(0x02, ndefLocked);
-                stringBuilder.append("Final lock: NDEF file (0x02) permanently locked.\\n");
-
-                // Lock Capability Container (0x01) as well (so CC can't be modified)
-                NTAG424DNAFileSettings ccLocked = new NTAG424DNAFileSettings(
-                        MFPCard.CommunicationMode.Plain,
-                        (byte) 0x0E,
-                        (byte) 0x00, // Write: Key 0 required
-                        (byte) 0x00, // Read/Write: Key 0 required
-                        (byte) 0x00  // Change access: Key 0 required
-                );
-                ntag424DNA.changeFileSettings(0x01, ccLocked);
-                stringBuilder.append("Final lock: Capability Container (0x01) permanently locked.\n");
+                ntag424DNA.changeFileSettings(0x02, finalLock);
+                ntag424DNA.changeFileSettings(0x01, finalLock);
+                stringBuilder.append("Tag finalized: only authenticated AES key can modify NDEF or CC.\n");
 
             } catch (Exception e) {
                 stringBuilder.append("Failed to lock NDEF/CC files: ").append(e.getMessage()).append("\n");
